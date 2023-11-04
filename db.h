@@ -1,32 +1,32 @@
 #ifndef SQLITEDATABASE_H
 #define SQLITEDATABASE_H
 
-#include <string>
 #include <crow.h>
 #include <sqlite3.h>
 
+#include <string>
+
 #define DB_FILE_NAME "todo.db"
 
-namespace SQLite
-{
-    typedef int (*SQLiteCallback)(void *, int, char **, char **);
+namespace SQLite {
+typedef int (*SQLiteCallback)(void *, int, char **, char **);
 
-    class Callback
-    {
-    public:
-        static int getJson(void *data, int argc, char **argv, char **azColName);
-    };
+class Callback {
+ public:
+  static int getJson(void *data, int argc, char **argv, char **azColName);
+  static int getJsonList(void *data, int argc, char **argv, char **azColName);
+};
 
-    class Database
-    {
-    public:
-        static void init();
-        static bool executeQuery(const std::string &sql, SQLiteCallback callback, crow::json::wvalue &result);
+class Database {
+ public:
+  static void init();
+  static bool executeQuery(const std::string &sql, SQLiteCallback callback, crow::json::wvalue &result);
+  static bool executeQuery(const std::string &sql, SQLiteCallback callback, crow::json::wvalue::list &resultList);
 
-    private:
-        static bool openDatabase();
-        static bool closeDatabase();
-    };
-}
+ private:
+  static bool openDatabase();
+  static bool closeDatabase();
+};
+}  // namespace SQLite
 
-#endif // SQLITEDATABASE_H
+#endif  // SQLITEDATABASE_H
