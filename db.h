@@ -20,7 +20,7 @@ namespace SQLite {
   public:
     static void init();
     static bool executeQuery(const std::string& sql, SQLiteCallback callback, crow::json::wvalue& result);
-
+    static bool executeQuery(const std::string& sql);
   private:
     static bool openDatabase();
     static bool closeDatabase();

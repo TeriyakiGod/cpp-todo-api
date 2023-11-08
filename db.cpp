@@ -42,6 +42,27 @@ namespace SQLite {
     return true;
   }
 
+  bool Database::executeQuery(const std::string& sql) {
+    if (!openDatabase())
+      return false;
+
+    char* errMsg = nullptr;
+
+    int rc = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
+
+    if (rc != SQLITE_OK) {
+      CROW_LOG_ERROR << "SQL error: " << errMsg;
+      sqlite3_free(errMsg);
+      return false;
+    }
+
+    if (!closeDatabase())
+      return false;
+
+    CROW_LOG_INFO << "Query executed successfully.";
+    return true;
+  }
+
   bool Database::openDatabase() {
     CROW_LOG_INFO << "Opening database...";
     int rc = sqlite3_open(DB_FILE_NAME, &db);

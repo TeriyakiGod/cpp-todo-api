@@ -15,8 +15,7 @@ void TodoAPI::getAll(crow::SimpleApp& app) {
                 crow::json::wvalue result;
                 std::string sql = "SELECT * FROM todos";
                 SQLite::Database::executeQuery(sql, SQLite::Callback::getJson, result);
-                res.write(result.dump());
-                res.end();
+                res.end(result.dump());
             });
 }
 
@@ -27,8 +26,7 @@ void TodoAPI::getById(crow::SimpleApp& app) {
                 crow::json::wvalue result;
                 std::string sql = "SELECT * FROM todos WHERE id = '" + id + "'";
                 SQLite::Database::executeQuery(sql, SQLite::Callback::getJson, result);
-                res.write(result.dump());
-                res.end();
+                res.end(result.dump());
             });
 }
 
@@ -44,8 +42,6 @@ void TodoAPI::create(crow::SimpleApp& app) {
                 newTodo.title = body["title"].s();
                 newTodo.description = body["description"].s();
                 newTodo.status = body["status"].s();
-
-                crow::json::wvalue result;
                 //TODO: Move the query to a file
                 std::string sql =
                     "CREATE TABLE IF NOT EXISTS todos ( \
@@ -60,8 +56,7 @@ void TodoAPI::create(crow::SimpleApp& app) {
                     newTodo.title + "', '" +
                     newTodo.description + "', '" +
                     newTodo.status + "')";
-                SQLite::Database::executeQuery(sql, nullptr, result);
-                res.write(result.dump());
+                SQLite::Database::executeQuery(sql);
                 res.end();
             });
 }
@@ -78,8 +73,6 @@ void TodoAPI::update(crow::SimpleApp& app) {
                 newTodo.title = body["title"].s();
                 newTodo.description = body["description"].s();
                 newTodo.status = body["status"].s();
-
-                crow::json::wvalue result;
                 //TODO: Move the query to a file
                 std::string sql =
                     "UPDATE todos SET \
@@ -87,8 +80,7 @@ void TodoAPI::update(crow::SimpleApp& app) {
             description = '" + newTodo.description + "', \
             status = '" + newTodo.status + "' \
             WHERE id = '" + newTodo.id + "'";
-                SQLite::Database::executeQuery(sql, nullptr, result);
-                res.write(result.dump());
+                SQLite::Database::executeQuery(sql);
                 res.end();
             });
 }
@@ -97,10 +89,8 @@ void TodoAPI::remove(crow::SimpleApp& app) {
     CROW_ROUTE(app, "/todos/<string>")
         .methods("DELETE"_method)([](crow::response& res, std::string id)
             {
-                crow::json::wvalue result;
                 std::string sql = "DELETE FROM todos WHERE id = '" + id + "'";
-                SQLite::Database::executeQuery(sql, nullptr, result);
-                res.write(result.dump());
+                SQLite::Database::executeQuery(sql);
                 res.end();
             });
 }
