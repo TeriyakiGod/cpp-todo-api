@@ -1,12 +1,12 @@
-#ifndef TODO_H
-#define TODO_H
+#ifndef TODO_MODEL_H
+#define TODO_MODEL_H
 #include <string>
 
-typedef struct{
+typedef struct {
     std::string id;
     std::string title;
     std::string description;
     std::string status;
 } todo;
 
-#endif // TODO_H
+#endif // TODO_MODEL_H

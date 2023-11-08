@@ -9,24 +9,22 @@
 #define DB_FILE_NAME "todo.db"
 
 namespace SQLite {
-typedef int (*SQLiteCallback)(void *, int, char **, char **);
+  typedef int (*SQLiteCallback)(void*, int, char**, char**);
 
-class Callback {
- public:
-  static int getJson(void *data, int argc, char **argv, char **azColName);
-  static int getJsonList(void *data, int argc, char **argv, char **azColName);
-};
+  class Callback {
+  public:
+    static int getJson(void* data, int argc, char** argv, char** azColName);
+  };
 
-class Database {
- public:
-  static void init();
-  static bool executeQuery(const std::string &sql, SQLiteCallback callback, crow::json::wvalue &result);
-  static bool executeQuery(const std::string &sql, SQLiteCallback callback, crow::json::wvalue::list &resultList);
+  class Database {
+  public:
+    static void init();
+    static bool executeQuery(const std::string& sql, SQLiteCallback callback, crow::json::wvalue& result);
 
- private:
-  static bool openDatabase();
-  static bool closeDatabase();
-};
+  private:
+    static bool openDatabase();
+    static bool closeDatabase();
+  };
 }  // namespace SQLite
 
 #endif  // SQLITEDATABASE_H

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(SQLite3 REQUIRED)
 find_package(Crow REQUIRED)
 
-add_executable(cpp-todo-app main.cpp db.cpp db.h)
+add_executable(cpp-todo-app main.cpp db.cpp db.h api/todo.cpp api/todo.h )
 
 target_link_libraries(cpp-todo-app PRIVATE Crow::Crow)
 target_link_libraries(cpp-todo-app PRIVATE SQLite::SQLite3)
