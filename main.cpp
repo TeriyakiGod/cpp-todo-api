@@ -1,21 +1,25 @@
-#include <crow.h>
-#include <crow/http_request.h>
-
 #include <iostream>
-
 #include "db.h"
 #include "api/todo.h"
+#include "httplib.h"
+#include "spdlog/spdlog.h"
 
 int main(int, char**)
 {
-    CROW_LOG_INFO << "Server is running on port 18080";
-    crow::SimpleApp app;
+    spdlog::set_level(spdlog::level::debug);
+    spdlog::info("Starting server...");
+    httplib::Server svr;
 
-    app.loglevel(crow::LogLevel::WARNING);
+    svr.set_logger([](const auto& req, const auto& res) {
+        spdlog::info("{} {} {}", req.method, req.path, res.status);
+        });
 
-    CROW_ROUTE(app, "/")([]() { return "Hello world!"; });
+    svr.Get("/", [](const httplib::Request&, httplib::Response& res) {
+        res.set_content("Hello World!", "text/plain");
+        });
 
-    TodoAPI::init(app);
+    TodoAPI::expose(svr);
 
-    app.port(18080).multithreaded().run();
+    spdlog::info("Server running on port {}", 8080);
+    svr.listen("0.0.0.0", 8080);
 }

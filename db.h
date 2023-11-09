@@ -1,20 +1,19 @@
 #ifndef SQLITEDATABASE_H
 #define SQLITEDATABASE_H
 
-#include <crow.h>
-#include <sqlite3.h>
-
 #include <string>
+#include <sqlite3.h>
+#include "spdlog/spdlog.h"
+#include "json.hpp"
+using json = nlohmann::json;
 
 #define DB_FILE_NAME "todo.db"
 
 namespace SQLite {
   class Database {
   public:
-    static void init();
-
     template<typename... Args>
-    static crow::json::wvalue executeQuery(const std::string& sql, Args... args) {
+    static json executeQuery(const std::string& sql, Args... args) {
       sqlite3* db = openDatabase();
       if (db == nullptr)
         return nullptr;
@@ -23,42 +22,40 @@ namespace SQLite {
       int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL);
 
       if (rc != SQLITE_OK) {
-        CROW_LOG_ERROR << "Failed to prepare statement: " << sqlite3_errmsg(db);
+        spdlog::error("Can't prepare statement: {}", sqlite3_errmsg(db));
         return nullptr;
       }
 
       bindParams(stmt, 1, args...);
 
-      crow::json::wvalue result;
-      crow::json::wvalue::list resultList;
+      json result = json::array();
 
       while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
-        crow::json::wvalue row;
+        json row;
         getJson(stmt, row);
-        resultList.push_back(row);
+        result.push_back(row);
       }
 
       sqlite3_finalize(stmt);
 
       if (rc != SQLITE_DONE) {
-        CROW_LOG_ERROR << "Execution failed: " << sqlite3_errmsg(db);
+        spdlog::error("Can't step statement: {}", sqlite3_errmsg(db));
         return nullptr;
       }
+
+      spdlog::info("Query executed successfully.");
 
       if (!closeDatabase(db))
         return nullptr;
 
-      if (resultList.size() == 1)
-        result = (crow::json::wvalue)resultList[0];
-      else if (resultList.size() > 1)
-        result = (crow::json::wvalue)resultList;
-
-      CROW_LOG_INFO << "Statement executed successfully.";
-      return result;
+      if (result.size() == 1 || result.size() == 0)
+        return result[0];
+      else
+        return result;
     }
 
   private:
-    static void getJson(sqlite3_stmt* stmt, crow::json::wvalue& result) {
+    static void getJson(sqlite3_stmt* stmt, json& result) {
       int columnCount = sqlite3_column_count(stmt);
       for (int i = 0; i < columnCount; i++) {
         const char* columnName = sqlite3_column_name(stmt, i);
@@ -102,24 +99,24 @@ namespace SQLite {
 
     static sqlite3* openDatabase() {
       sqlite3* db;
-      CROW_LOG_INFO << "Opening database...";
+      spdlog::info("Opening database...");
       int rc = sqlite3_open(DB_FILE_NAME, &db);
       if (rc) {
-        CROW_LOG_ERROR << "Can't open database: " << sqlite3_errmsg(db);
+        spdlog::error("Can't open database: {}", sqlite3_errmsg(db));
         sqlite3_close(db);
         return nullptr;
       }
-      CROW_LOG_INFO << "Database opened successfully.";
+      spdlog::info("Database opened successfully.");
       return db;
     }
 
     static bool closeDatabase(sqlite3* db) {
       int rc = sqlite3_close(db);
       if (rc) {
-        CROW_LOG_ERROR << "Can't close database: " << sqlite3_errmsg(db);
+        spdlog::error("Can't close database: {}", sqlite3_errmsg(db));
         return false;
       }
-      CROW_LOG_INFO << "Database closed successfully.";
+      spdlog::info("Database closed successfully.");
       return true;
     }
   };
