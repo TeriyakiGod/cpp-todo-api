@@ -1,5 +1,5 @@
-#ifndef TODO_H
-#define TODO_H
+#ifndef USER_H
+#define USER_H
 
 #include <fstream>
 #include <string>
@@ -14,41 +14,42 @@ using json = nlohmann::json;
 //TODO: add user authentication
 //TODO: add sql query files for user
 
-#define SQL_INIT "sql/initUser.sql"
-#define SQL_CREATE "sql/createUser.sql"
-#define SQL_UPDATE "sql/updateUser.sql"
-#define SQL_DELETE "sql/deleteUser.sql"
-#define SQL_GET "sql/getUser.sql"
-#define SQL_GETS "sql/getUsers.sql"
+#define SQL_CREATE_USER_TABLE "sql/createUserTable.sql"
+#define SQL_CREATE_USER "sql/createUser.sql"
+#define SQL_UPDATE_USER "sql/updateUser.sql"
+#define SQL_DELETE_USER "sql/deleteUser.sql"
+#define SQL_GET_USER "sql/getUser.sql"
+#define SQL_GET_USERS "sql/getUsers.sql"
 
 class UserAPI {
 public:
     static void expose(httplib::Server& svr) {
 
-        std::ifstream file(SQL_INIT);
+        std::ifstream file(SQL_CREATE_USER_TABLE);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         SQLite::Database::executeQuery(sql);
 
         svr.Get("/user", [&](const Request& req, Response& res) {
-            std::ifstream file(SQL_GETS);
+            std::ifstream file(SQL_GET_USERS);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             json result = SQLite::Database::executeQuery(sql);
             res.set_content(result.dump(), "application/json");
             });
 
         svr.Get("/user/:string", [&](const Request& req, Response& res) {
-            std::ifstream file(SQL_GET);
+            std::ifstream file(SQL_GET_USER);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             json result = SQLite::Database::executeQuery(sql, req.path_params.at("string"));
             res.set_content(result.dump(), "application/json");
             });
 
         svr.Post("/user", [&](const Request& req, Response& res) {
-            json body = json::parse(req.body);
+            json j = json::parse(req.body);
 
-            Model::User newUser = Model::fromJson<Model::User>(body);
+            Models::User newUser;
+            j.get_to(newUser);
 
-            std::ifstream file(SQL_CREATE);
+            std::ifstream file(SQL_CREATE_USER);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
             SQLite::Database::executeQuery(sql, newUser.id, newUser.name, newUser.email, newUser.password);
@@ -56,18 +57,19 @@ public:
             });
 
         svr.Put("/user", [&](const Request& req, Response& res) {
-            json body = json::parse(req.body);
+            json j = json::parse(req.body);
 
-            Model::User newUser = Model::fromJson<Model::User>(body);
+            Models::User newUser;
+            j.get_to(newUser);
 
-            std::ifstream file(SQL_UPDATE);
+            std::ifstream file(SQL_UPDATE_USER);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             SQLite::Database::executeQuery(sql, newUser.name, newUser.email, newUser.password, newUser.id);
             res.set_content("user updated", "text/plain");
             });
 
         svr.Delete("/user/:string", [&](const Request& req, Response& res) {
-            std::ifstream file(SQL_DELETE);
+            std::ifstream file(SQL_DELETE_USER);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             SQLite::Database::executeQuery(sql, req.path_params.at("string"));
             res.set_content("user deleted", "text/plain");
@@ -75,4 +77,4 @@ public:
     }
 };
 
-#endif // TODO_H
+#endif // USER_H

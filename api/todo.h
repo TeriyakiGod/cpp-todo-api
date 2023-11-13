@@ -11,59 +11,60 @@ using json = nlohmann::json;
 #include "../db.h"
 #include "../models.h"
 
-#define SQL_INIT "sql/todo/initTodo.sql"
-#define SQL_CREATE "sql/todo/createTodo.sql"
-#define SQL_UPDATE "sql/todo/updateTodo.sql"
-#define SQL_DELETE "sql/todo/deleteTodo.sql"
-#define SQL_GET "sql/todo/getTodo.sql"
-#define SQL_GETS "sql/todo/getTodos.sql"
+#define SQL_CREATE_TODO_TABLE "sql/todo/initTodoTable.sql"
+#define SQL_CREATE_TODO "sql/todo/createTodo.sql"
+#define SQL_UPDATE_TODO "sql/todo/updateTodo.sql"
+#define SQL_DELETE_TODO "sql/todo/deleteTodo.sql"
+#define SQL_GET_TODO "sql/todo/getTodo.sql"
+#define SQL_GET_TODOS "sql/todo/getTodos.sql"
 
 class TodoAPI {
 public:
     static void expose(httplib::Server& svr) {
-
-        std::ifstream file(SQL_INIT);
+        std::ifstream file(SQL_CREATE_TODO_TABLE);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         SQLite::Database::executeQuery(sql);
 
         svr.Get("/todo", [&](const Request& req, Response& res) {
-            std::ifstream file(SQL_GETS);
+            std::ifstream file(SQL_GET_TODOS);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             json result = SQLite::Database::executeQuery(sql);
             res.set_content(result.dump(), "application/json");
             });
 
         svr.Get("/todo/:string", [&](const Request& req, Response& res) {
-            std::ifstream file(SQL_GET);
+            std::ifstream file(SQL_GET_TODO);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             json result = SQLite::Database::executeQuery(sql, req.path_params.at("string"));
             res.set_content(result.dump(), "application/json");
             });
 
         svr.Post("/todo", [&](const Request& req, Response& res) {
-            json json = json::parse(req.body);
+            json j = json::parse(req.body);
 
-            Model::Todo newTodo = Model::fromJson<Model::Todo>(json);
+            Models::Todo newTodo;
+            j.get_to(newTodo);
 
-            std::ifstream file(SQL_CREATE);
+            std::ifstream file(SQL_CREATE_TODO);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             SQLite::Database::executeQuery(sql, newTodo.id, newTodo.title, newTodo.description, newTodo.status);
             res.set_content("new todo created", "text/plain");
             });
 
         svr.Put("/todo", [&](const Request& req, Response& res) {
-            json json = json::parse(req.body);
+            json j = json::parse(req.body);
 
-            Model::Todo newTodo = Model::fromJson<Model::Todo>(json);
+            Models::Todo newTodo;
+            j.get_to(newTodo);
 
-            std::ifstream file(SQL_UPDATE);
+            std::ifstream file(SQL_UPDATE_TODO);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             SQLite::Database::executeQuery(sql, newTodo.title, newTodo.description, newTodo.status, newTodo.id);
             res.set_content("todo updated", "text/plain");
             });
 
         svr.Delete("/todo/:string", [&](const Request& req, Response& res) {
-            std::ifstream file(SQL_DELETE);
+            std::ifstream file(SQL_DELETE_TODO);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             SQLite::Database::executeQuery(sql, req.path_params.at("string"));
             res.set_content("todo deleted", "text/plain");

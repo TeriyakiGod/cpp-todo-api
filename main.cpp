@@ -1,6 +1,7 @@
 #include <iostream>
 #include "db.h"
 #include "api/todo.h"
+#include "api/user.h"
 #include "httplib.h"
 #include "spdlog/spdlog.h"
 
@@ -19,6 +20,7 @@ int main(int, char**)
         });
 
     TodoAPI::expose(svr);
+    UserAPI::expose(svr);
 
     spdlog::info("Server running on port {}", 8080);
     svr.listen("0.0.0.0", 8080);
