@@ -1,7 +1,7 @@
 #include <iostream>
 #include "db.h"
-#include "api/todo.h"
-#include "api/user.h"
+#include "controllers/todo.h"
+#include "controllers/user.h"
 #include "httplib.h"
 #include "spdlog/spdlog.h"
 
@@ -15,12 +15,15 @@ int main(int, char**)
         spdlog::info("{} {} {}", req.method, req.path, res.status);
         });
 
-    svr.Get("/", [](const httplib::Request&, httplib::Response& res) {
-        res.set_content("Hello World!", "text/plain");
+    std::ifstream todo_html_file("templates/todo.html");
+    std::string todo_html_code((std::istreambuf_iterator<char>(todo_html_file)), std::istreambuf_iterator<char>());
+    spdlog::info("TODO {}", todo_html_code);
+    svr.Get("/", [&](const httplib::Request&, httplib::Response& res) {
+        res.set_content(todo_html_code, "text/html");
         });
 
-    TodoAPI::expose(svr);
-    UserAPI::expose(svr);
+    Controller::Todo::expose(svr);
+    Controller::User::expose(svr);
 
     spdlog::info("Server running on port {}", 8080);
     svr.listen("0.0.0.0", 8080);
