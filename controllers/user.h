@@ -14,6 +14,7 @@ using json = nlohmann::json;
 //TODO: add user authentication
 
 #define SQL_CREATE_USER_TABLE "../sql/user/createUserTable.sql"
+#define SQL_CHECK_IF_USER_EXISTS "../sql/user/checkIfUserExists.sql"
 #define SQL_CREATE_USER "../sql/user/createUser.sql"
 #define SQL_UPDATE_USER "../sql/user/updateUser.sql"
 #define SQL_DELETE_USER "../sql/user/deleteUser.sql"
@@ -47,12 +48,21 @@ namespace Controller {
 
                 auto newUser = j.template get<Model::User>();
 
-                std::ifstream file(SQL_CREATE_USER);
-                std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+                std::ifstream file1(SQL_CHECK_IF_USER_EXISTS);
+                std::string sql1((std::istreambuf_iterator<char>(file1)), std::istreambuf_iterator<char>());
 
-                SQLite::Database::executeQuery(sql, newUser.id, newUser.name, newUser.email, newUser.password);
-                res.set_content("new user created", "text/plain");
-                });
+                json doesEmailExist = SQLite::Database::executeQuery(sql1, newUser.email);
+                if (doesEmailExist.dump() == "0")
+                {
+                    std::ifstream file2(SQL_CREATE_USER);
+                    std::string sql2((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+                    
+                    SQLite::Database::executeQuery(sql2, newUser.id, newUser.name, newUser.email, newUser.password);
+                    res.set_content("new user created", "text/plain");
+                } else {
+                    res.set_content("user already exists", "text/plain");
+                }
+            });
 
             svr.Put("/user", [&](const Request& req, Response& res) {
                 json j = json::parse(req.body);
