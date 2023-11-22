@@ -1,3 +1,3 @@
-DELETE FROM todos
+DELETE FROM Todos
 WHERE
-    id = ?;
+    TodoID = ?;

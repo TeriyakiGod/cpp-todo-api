@@ -2,36 +2,42 @@
 #define MODEL_TODO_H
 
 #include <string>
-#include "../json.hpp"
+#include "../tools.h"
+#include <json.hpp>
 using json = nlohmann::json;
+using namespace std;
 
 namespace Model
 {
     struct Todo
     {
-        std::string id;
-        std::string title;
-        std::string description;
-        std::string status;
+        string id;
+        string user_id;
+        string title;
+        string description;
+        int status;
     };
 
     void from_json(const json& j, Todo& t)
     {
-        j.at("id").get_to(t.id);
-        j.at("title").get_to(t.title);
-        j.at("description").get_to(t.description);
-        j.at("status").get_to(t.status);
+        t.id = Tools::UUID::generate();
+        j.at("UserID").get_to(t.user_id);
+        j.at("Title").get_to(t.title);
+        j.at("Description").get_to(t.description);
+        j.at("Status").get_to(t.status);
     }
 
     void to_json(json& j, const Todo& t)
     {
         j = json{
-            {"id", t.id},
-            {"title", t.title},
-            {"description", t.description},
-            {"status", t.status}
+            {"TodoID", t.id},
+            {"UserID", t.user_id},
+            {"Title", t.title},
+            {"Description", t.description},
+            {"Status", t.status}
         };
     }
+
 }
 
 #endif // MODEL_TODO_H

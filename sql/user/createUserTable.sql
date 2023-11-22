@@ -1,7 +1,7 @@
 CREATE TABLE
-    IF NOT EXISTS users (
-        id TEXT PRIMARY KEY,
-        name TEXT,
-        email TEXT,
-        password TEXT
+    IF NOT EXISTS Users (
+        UserID TEXT PRIMARY KEY,
+        Name TEXT,
+        Email TEXT,
+        Password TEXT
     );

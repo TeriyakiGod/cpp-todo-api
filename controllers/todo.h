@@ -3,25 +3,25 @@
 
 #include <fstream>
 #include <string>
-#include "../httplib.h"
+#include <httplib.h>
 using namespace httplib;
-#include "../json.hpp"
+#include <json.hpp>
 using json = nlohmann::json;
 #include <spdlog/spdlog.h>
 #include "../db.h"
 #include "../models/todo.h"
 
-#define SQL_CREATE_TODO_TABLE "sql/todo/initTodoTable.sql"
-#define SQL_CREATE_TODO "sql/todo/createTodo.sql"
-#define SQL_UPDATE_TODO "sql/todo/updateTodo.sql"
-#define SQL_DELETE_TODO "sql/todo/deleteTodo.sql"
-#define SQL_GET_TODO "sql/todo/getTodo.sql"
-#define SQL_GET_TODOS "sql/todo/getTodos.sql"
+#define SQL_CREATE_TODO_TABLE "../sql/todo/createTodoTable.sql"
+#define SQL_CREATE_TODO "../sql/todo/createTodo.sql"
+#define SQL_UPDATE_TODO "../sql/todo/updateTodo.sql"
+#define SQL_DELETE_TODO "../sql/todo/deleteTodo.sql"
+#define SQL_GET_TODO "../sql/todo/getTodo.sql"
+#define SQL_GET_TODOS "../sql/todo/getTodos.sql"
 
 namespace Controller {
     class Todo {
     public:
-        static void expose(httplib::Server& svr) {
+        Todo(httplib::Server& svr) {
             std::ifstream file(SQL_CREATE_TODO_TABLE);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             SQLite::Database::executeQuery(sql);

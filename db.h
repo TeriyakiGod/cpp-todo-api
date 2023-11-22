@@ -14,6 +14,7 @@ namespace SQLite {
   public:
     template<typename... Args>
     static json executeQuery(const std::string& sql, Args... args) {
+      spdlog::debug("Executing query: {}", sql);
       sqlite3* db = openDatabase();
       if (db == nullptr)
         return nullptr;
@@ -31,19 +32,27 @@ namespace SQLite {
       json result = json::array();
 
       while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
-        json row;
-        getJson(stmt, row);
-        result.push_back(row);
+      json row;
+      getJson(stmt, row);
+      result.push_back(row);
+      }
+
+      switch (rc) {
+      case SQLITE_BUSY:
+        spdlog::error("The database file is locked.");
+        break;
+      case SQLITE_DONE:
+        spdlog::info("Query executed successfully.");
+        break;
+      case SQLITE_ERROR:
+        spdlog::error("SQL error: {}", sqlite3_errmsg(db));
+        break;
+      case SQLITE_MISUSE:
+        spdlog::error("SQLite misuse: {}", sqlite3_errmsg(db));
+        break;
       }
 
       sqlite3_finalize(stmt);
-
-      if (rc != SQLITE_DONE) {
-        spdlog::error("Can't step statement: {}", sqlite3_errmsg(db));
-        return nullptr;
-      }
-
-      spdlog::info("Query executed successfully.");
 
       if (!closeDatabase(db))
         return nullptr;

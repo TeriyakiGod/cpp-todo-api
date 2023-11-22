@@ -1,7 +1,7 @@
-UPDATE users
+UPDATE Users
 SET
-    name = ?,
-    email = ?,
-    password = ?
+    Name = ?,
+    Email = ?,
+    Password = ?
 WHERE
-    id = ?;
+    UserID = ?;

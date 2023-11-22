@@ -1,6 +1,6 @@
 SELECT
     *
 FROM
-    users
+    Users
 WHERE
-    id = ?;
+    UserID = ?;

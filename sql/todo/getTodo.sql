@@ -1,6 +1,6 @@
 SELECT
     *
 FROM
-    todos
+    Todos
 WHERE
-    id = ?;
+    TodoID = ?;

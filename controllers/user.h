@@ -3,27 +3,26 @@
 
 #include <fstream>
 #include <string>
-#include "../httplib.h"
+#include <httplib.h>
 using namespace httplib;
-#include "../json.hpp"
+#include <json.hpp>
 using json = nlohmann::json;
 #include <spdlog/spdlog.h>
 #include "../db.h"
 #include "../models/user.h"
 
 //TODO: add user authentication
-//TODO: add sql query files for user
 
-#define SQL_CREATE_USER_TABLE "sql/user/createUserTable.sql"
-#define SQL_CREATE_USER "sql/user/createUser.sql"
-#define SQL_UPDATE_USER "sql/user/updateUser.sql"
-#define SQL_DELETE_USER "sql/user/deleteUser.sql"
-#define SQL_GET_USER "sql/user/getUser.sql"
-#define SQL_GET_USERS "sql/user/getUsers.sql"
+#define SQL_CREATE_USER_TABLE "../sql/user/createUserTable.sql"
+#define SQL_CREATE_USER "../sql/user/createUser.sql"
+#define SQL_UPDATE_USER "../sql/user/updateUser.sql"
+#define SQL_DELETE_USER "../sql/user/deleteUser.sql"
+#define SQL_GET_USER "../sql/user/getUser.sql"
+#define SQL_GET_USERS "../sql/user/getUsers.sql"
 namespace Controller {
     class User {
     public:
-        static void expose(httplib::Server& svr) {
+        User(httplib::Server& svr) {
 
             std::ifstream file(SQL_CREATE_USER_TABLE);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());

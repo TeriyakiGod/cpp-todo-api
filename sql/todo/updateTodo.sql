@@ -1,7 +1,7 @@
-UPDATE todos
+UPDATE Todos
 SET
-    title = ?,
-    description = ?,
-    status = ?
+    Title = ?,
+    Description = ?,
+    Status = ?
 WHERE
-    id = ?;
+    TodoID = ?;

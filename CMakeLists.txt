@@ -5,7 +5,9 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(SQLite3 REQUIRED)
 find_package(spdlog REQUIRED)
 
-add_executable(cpp-todo-app main.cpp db.h httplib.h api/todo.h models.h json.hpp)
+include_directories(include)
+
+add_executable(cpp-todo-app main.cpp db.h controllers/todo.h controllers/user.h models/todo.h models/user.h)
 
 target_link_libraries(cpp-todo-app PRIVATE SQLite::SQLite3)
 target_link_libraries(cpp-todo-app PRIVATE spdlog::spdlog)

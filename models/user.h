@@ -2,34 +2,36 @@
 #define MODEL_USER_H
 
 #include <string>
-#include "../json.hpp"
+#include "../tools.h"
+#include <json.hpp>
 using json = nlohmann::json;
+using namespace std;
 
 namespace Model
 {
     struct User
     {
-        std::string id;
-        std::string name;
-        std::string email;
-        std::string password;
+        string id;
+        string name;
+        string email;
+        string password;
     };
 
     void from_json(const json& j, User& u)
     {
-        j.at("id").get_to(u.id);
-        j.at("name").get_to(u.name);
-        j.at("email").get_to(u.email);
-        j.at("password").get_to(u.password);
+        u.id = Tools::UUID::generate();
+        j.at("Name").get_to(u.name);
+        j.at("Email").get_to(u.email);
+        j.at("Password").get_to(u.password);
     }
 
     void to_json(json& j, const User& u)
     {
         j = json{
-            {"id", u.id},
-            {"name", u.name},
-            {"email", u.email},
-            {"password", u.password}
+            {"UserID", u.id},
+            {"Name", u.name},
+            {"Email", u.email},
+            {"Password", u.password}
         };
     }
 } // namespace Models

@@ -1,4 +1,4 @@
 INSERT INTO
-    todos (id, title, description, status)
+    Todos (TodoID, UserID, Title, Description, Status)
 VALUES
     (?, ?, ?, ?);
