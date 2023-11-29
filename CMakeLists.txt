@@ -11,3 +11,4 @@ add_executable(cpp-todo-app main.cpp db.h controllers/todo.h controllers/user.h 
 
 target_link_libraries(cpp-todo-app PRIVATE SQLite::SQLite3)
 target_link_libraries(cpp-todo-app PRIVATE spdlog::spdlog)
+target_link_libraries(cpp-todo-app PRIVATE sodium)

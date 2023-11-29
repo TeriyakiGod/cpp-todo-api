@@ -22,7 +22,7 @@ namespace Model
         u.user_id = Tools::UUID::generate();
         j.at("name").get_to(u.name);
         j.at("email").get_to(u.email);
-        j.at("password").get_to(u.password);
+        u.password = Tools::Hash::generate(j.at("password").get<string>());
     }
 
     void to_json(json& j, const User& u)
