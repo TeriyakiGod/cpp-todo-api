@@ -28,7 +28,7 @@ namespace Model
     void to_json(json& j, const User& u)
     {
         j = json{
-            {"userID", u.user_id},
+            {"user_id", u.user_id},
             {"name", u.name},
             {"email", u.email},
             {"password", u.password}
