@@ -3,4 +3,4 @@ SELECT
 FROM
     Users
 WHERE
-    UserID = ?;
+    user_id = ?;

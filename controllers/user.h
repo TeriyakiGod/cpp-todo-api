@@ -24,63 +24,86 @@ namespace Controller {
     class User {
     public:
         User(httplib::Server& svr) {
-
-            std::ifstream file(SQL_CREATE_USER_TABLE);
-            std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-            SQLite::Database::executeQuery(sql);
+            prepareUserTable();
 
             svr.Get("/user", [&](const Request& req, Response& res) {
-                std::ifstream file(SQL_GET_USERS);
-                std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-                json result = SQLite::Database::executeQuery(sql);
-                res.set_content(result.dump(), "application/json");
-                });
+                res.set_content(getUsers(), "application/json");
+            });
 
             svr.Get("/user/:string", [&](const Request& req, Response& res) {
-                std::ifstream file(SQL_GET_USER);
-                std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-                json result = SQLite::Database::executeQuery(sql, req.path_params.at("string"));
-                res.set_content(result.dump(), "application/json");
-                });
+                res.set_content(getUser(req.path_params.at("string")), "application/json");
+            });
 
             svr.Post("/user", [&](const Request& req, Response& res) {
-                json j = json::parse(req.body);
-
-                auto newUser = j.template get<Model::User>();
-
-                std::ifstream file1(SQL_CHECK_IF_USER_EXISTS);
-                std::string sql1((std::istreambuf_iterator<char>(file1)), std::istreambuf_iterator<char>());
-
-                json doesEmailExist = SQLite::Database::executeQuery(sql1, newUser.email);
-                if (doesEmailExist.dump() == "0")
-                {
-                    std::ifstream file2(SQL_CREATE_USER);
-                    std::string sql2((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-                    
-                    SQLite::Database::executeQuery(sql2, newUser.id, newUser.name, newUser.email, newUser.password);
-                    res.set_content("new user created", "text/plain");
-                } else {
-                    res.set_content("user already exists", "text/plain");
-                }
+                res.set_content(createUser(req.body), "text/plain");
             });
 
             svr.Put("/user", [&](const Request& req, Response& res) {
-                json j = json::parse(req.body);
-
-                auto newUser = j.template get<Model::User>();
-
-                std::ifstream file(SQL_UPDATE_USER);
-                std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-                SQLite::Database::executeQuery(sql, newUser.name, newUser.email, newUser.password, newUser.id);
-                res.set_content("user updated", "text/plain");
-                });
+                res.set_content(updateUser(req.body), "text/plain");
+            });
 
             svr.Delete("/user/:string", [&](const Request& req, Response& res) {
-                std::ifstream file(SQL_DELETE_USER);
-                std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-                SQLite::Database::executeQuery(sql, req.path_params.at("string"));
-                res.set_content("user deleted", "text/plain");
-                });
+                res.set_content(deleteUser(req.path_params.at("string")), "text/plain");
+            });
+        }
+
+    private:
+        void prepareUserTable(){
+            std::ifstream file(SQL_CREATE_USER_TABLE);
+            std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            SQLite::Database::executeQuery(sql);
+        }
+
+        std::string getUsers() {
+            std::ifstream file(SQL_GET_USERS);
+            std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            json result = SQLite::Database::executeQuery(sql);
+            return result.dump();
+        }
+
+        std::string getUser(const std::string& param) {
+            std::ifstream file(SQL_GET_USER);
+            std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            json result = SQLite::Database::executeQuery(sql, param);
+            return result.dump();
+        }
+
+        std::string createUser(const std::string& body) {
+            json j = json::parse(body);
+            auto newUser = j.template get<Model::User>();
+
+            std::ifstream file1(SQL_CHECK_IF_USER_EXISTS);
+            std::string sql1((std::istreambuf_iterator<char>(file1)), std::istreambuf_iterator<char>());
+
+            json result = SQLite::Database::executeQuery(sql1, newUser.email);
+            bool doesEmailExist = result["user_exists"].template get<int>();
+            spdlog::debug("doesEmailExist: {}", doesEmailExist);
+            if (!doesEmailExist) {
+                std::ifstream file2(SQL_CREATE_USER);
+                std::string sql2((std::istreambuf_iterator<char>(file2)), std::istreambuf_iterator<char>());
+
+                SQLite::Database::executeQuery(sql2, newUser.user_id, newUser.name, newUser.email, newUser.password);
+                return "New user created";
+            } else {
+                return "User already exists";
+            }
+        }
+
+        std::string updateUser(const std::string& body) {
+            json j = json::parse(body);
+            auto newUser = j.template get<Model::User>();
+
+            std::ifstream file(SQL_UPDATE_USER);
+            std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            SQLite::Database::executeQuery(sql, newUser.name, newUser.email, newUser.password, newUser.user_id);
+            return "User updated";
+        }
+
+        std::string deleteUser(const std::string& param) {
+            std::ifstream file(SQL_DELETE_USER);
+            std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            SQLite::Database::executeQuery(sql, param);
+            return "User deleted";
         }
     };
 

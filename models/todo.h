@@ -11,7 +11,7 @@ namespace Model
 {
     struct Todo
     {
-        string id;
+        string todo_id;
         string user_id;
         string title;
         string description;
@@ -20,21 +20,21 @@ namespace Model
 
     void from_json(const json& j, Todo& t)
     {
-        t.id = Tools::UUID::generate();
-        j.at("UserID").get_to(t.user_id);
-        j.at("Title").get_to(t.title);
-        j.at("Description").get_to(t.description);
-        j.at("Status").get_to(t.status);
+        t.todo_id = Tools::UUID::generate();
+        j.at("user_id").get_to(t.user_id);
+        j.at("title").get_to(t.title);
+        j.at("description").get_to(t.description);
+        j.at("status").get_to(t.status);
     }
 
     void to_json(json& j, const Todo& t)
     {
         j = json{
-            {"TodoID", t.id},
-            {"UserID", t.user_id},
-            {"Title", t.title},
-            {"Description", t.description},
-            {"Status", t.status}
+            {"todo_id", t.todo_id},
+            {"user_id", t.user_id},
+            {"title", t.title},
+            {"description", t.description},
+            {"status", t.status}
         };
     }
 

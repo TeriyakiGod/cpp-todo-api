@@ -7,14 +7,14 @@
 #include "json.hpp"
 using json = nlohmann::json;
 
-#define DB_FILE_NAME "todo.db"
+#define DB_FILE_NAME "../db.sqlite3"
 
 namespace SQLite {
   class Database {
   public:
     template<typename... Args>
     static json executeQuery(const std::string& sql, Args... args) {
-      spdlog::debug("Executing query: {}", sql);
+      spdlog::debug("Executing query:\n{}", sql);
       sqlite3* db = openDatabase();
       if (db == nullptr)
         return nullptr;
@@ -56,11 +56,11 @@ namespace SQLite {
 
       if (!closeDatabase(db))
         return nullptr;
-
-      if (result.size() == 1 || result.size() == 0)
+      if (result.size() == (size_t)1 || result.size() == (size_t)0){
         return result[0];
-      else
+      } else {
         return result;
+      }
     }
 
   private:

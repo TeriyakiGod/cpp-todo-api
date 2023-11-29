@@ -1,4 +1,4 @@
 INSERT INTO
-    Users (UserID, Name, Email, Password)
+    Users (user_id, name, email, password)
 VALUES
     (?, ?, ?, ?);

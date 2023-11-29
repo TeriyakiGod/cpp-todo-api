@@ -1,3 +1,3 @@
 SELECT COUNT(*) AS user_exists
-FROM users
+FROM Users
 WHERE email = ?;

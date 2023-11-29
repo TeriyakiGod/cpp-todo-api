@@ -1,8 +1,8 @@
 CREATE TABLE
     IF NOT EXISTS Todos (
-        TodoID TEXT PRIMARY KEY,
-        UserID TEXT,
-        Title TEXT,
-        Description TEXT,
-        Status TEXT
+        todo_id TEXT PRIMARY KEY,
+        user_id TEXT,
+        title TEXT,
+        description TEXT,
+        status INTEGER
     );

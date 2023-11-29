@@ -11,7 +11,7 @@ namespace Model
 {
     struct User
     {
-        string id;
+        string user_id;
         string name;
         string email;
         string password;
@@ -19,19 +19,19 @@ namespace Model
 
     void from_json(const json& j, User& u)
     {
-        u.id = Tools::UUID::generate();
-        j.at("Name").get_to(u.name);
-        j.at("Email").get_to(u.email);
-        j.at("Password").get_to(u.password);
+        u.user_id = Tools::UUID::generate();
+        j.at("name").get_to(u.name);
+        j.at("email").get_to(u.email);
+        j.at("password").get_to(u.password);
     }
 
     void to_json(json& j, const User& u)
     {
         j = json{
-            {"UserID", u.id},
-            {"Name", u.name},
-            {"Email", u.email},
-            {"Password", u.password}
+            {"userID", u.user_id},
+            {"name", u.name},
+            {"email", u.email},
+            {"password", u.password}
         };
     }
 } // namespace Models
