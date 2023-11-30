@@ -7,7 +7,7 @@
 
 namespace Tools
 {
-    class UUID
+    class Uuid
     {
     public:
         static std::string generate()
@@ -17,7 +17,7 @@ namespace Tools
             std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
             std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
             std::mt19937 generator(seq);
-            uuids::uuid_random_generator gen{generator};
+            uuids::uuid_random_generator gen{ generator };
 
             return uuids::to_string(gen());
         }
@@ -36,33 +36,18 @@ namespace Tools
             unsigned char salt[crypto_pwhash_SALTBYTES];
             randombytes_buf(salt, sizeof(salt));
 
-            std::string hashedPassword(crypto_pwhash_STRBYTES, ' ');
+            std::string hashed_password(crypto_pwhash_STRBYTES, ' ');
             if (crypto_pwhash_str(
-                    hashedPassword.data(),
-                    password.c_str(),
-                    password.length(),
-                    crypto_pwhash_OPSLIMIT_INTERACTIVE,
-                    crypto_pwhash_MEMLIMIT_INTERACTIVE) != 0)
+                hashed_password.data(),
+                password.c_str(),
+                password.length(),
+                crypto_pwhash_OPSLIMIT_INTERACTIVE,
+                crypto_pwhash_MEMLIMIT_INTERACTIVE) != 0)
             {
                 spdlog::error("Error: Unable to hash password");
                 return nullptr;
             }
-            return hashedPassword;
-        }
-        bool validatePassword(const std::string &storedHash, const std::string &enteredPassword)
-        {
-            if (sodium_init() < 0)
-            {
-                spdlog::error("Error: Unable to initialize libsodium");
-                return false;
-            }
-
-            int result = crypto_pwhash_str_verify(
-                storedHash.c_str(),
-                enteredPassword.c_str(),
-                enteredPassword.length());
-
-            return result == 0;
+            return hashed_password;
         }
     };
 }

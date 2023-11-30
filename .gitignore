@@ -1,4 +1,4 @@
 .vscode
 build
-todo.db
+db.sqlite3
 .editorconfig

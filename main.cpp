@@ -2,6 +2,7 @@
 #include "db.h"
 #include "controllers/todo.h"
 #include "controllers/user.h"
+#include "controllers/auth.h"
 #include "httplib.h"
 #include "spdlog/spdlog.h"
 
@@ -23,6 +24,7 @@ int main(int, char**)
 
     Controller::Todo todoController(svr);
     Controller::User userController(svr);
+    Controller::Auth authController(svr);
 
     spdlog::info("Server running on port {}", 8080);
     svr.listen("0.0.0.0", 8080);

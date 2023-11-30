@@ -4,11 +4,14 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(SQLite3 REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(OpenSSL REQUIRED)
 
-include_directories(include)
 
-add_executable(cpp-todo-app main.cpp db.h controllers/todo.h controllers/user.h models/todo.h models/user.h)
+include_directories(${PROJECT_SOURCE_DIR}/include)
+
+add_executable(cpp-todo-app main.cpp db.h controllers/todo.h controllers/user.h models/todo.h models/user.h controllers/auth.h)
 
 target_link_libraries(cpp-todo-app PRIVATE SQLite::SQLite3)
 target_link_libraries(cpp-todo-app PRIVATE spdlog::spdlog)
 target_link_libraries(cpp-todo-app PRIVATE sodium)
+target_link_libraries(cpp-todo-app PRIVATE OpenSSL::SSL OpenSSL::Crypto)

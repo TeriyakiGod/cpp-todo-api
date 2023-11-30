@@ -20,7 +20,7 @@ namespace Model
 
     void from_json(const json& j, Todo& t)
     {
-        t.todo_id = Tools::UUID::generate();
+        t.todo_id = Tools::Uuid::generate();
         j.at("user_id").get_to(t.user_id);
         j.at("title").get_to(t.title);
         j.at("description").get_to(t.description);

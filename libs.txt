@@ -1,0 +1,6 @@
+httplib
+json
+uuid
+sqlite
+spdlog
+sodium

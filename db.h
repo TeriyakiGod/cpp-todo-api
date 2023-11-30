@@ -1,5 +1,5 @@
-#ifndef SQLITEDATABASE_H
-#define SQLITEDATABASE_H
+#ifndef SQLITE_DATABASE_H
+#define SQLITE_DATABASE_H
 
 #include <string>
 #include <sqlite3.h>
@@ -9,13 +9,13 @@ using json = nlohmann::json;
 
 #define DB_FILE_NAME "../db.sqlite3"
 
-namespace SQLite {
-  class Database {
+namespace sqlite {
+  class database {
   public:
     template<typename... Args>
-    static json executeQuery(const std::string& sql, Args... args) {
+    static json execute_query(const std::string& sql, Args... args) {
       spdlog::debug("Executing query:\n{}", sql);
-      sqlite3* db = openDatabase();
+      sqlite3* db = open_database();
       if (db == nullptr)
         return nullptr;
 
@@ -27,14 +27,14 @@ namespace SQLite {
         return nullptr;
       }
 
-      bindParams(stmt, 1, args...);
+      bind_params(stmt, 1, args...);
 
       json result = json::array();
 
       while ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
-      json row;
-      getJson(stmt, row);
-      result.push_back(row);
+        json row;
+        get_json(stmt, row);
+        result.push_back(row);
       }
 
       switch (rc) {
@@ -54,42 +54,43 @@ namespace SQLite {
 
       sqlite3_finalize(stmt);
 
-      if (!closeDatabase(db))
+      if (!close_database(db))
         return nullptr;
-      if (result.size() == (size_t)1 || result.size() == (size_t)0){
+      if (result.size() == (size_t)1 || result.size() == (size_t)0) {
         return result[0];
-      } else {
+      }
+      else {
         return result;
       }
     }
 
   private:
-    static void getJson(sqlite3_stmt* stmt, json& result) {
-      int columnCount = sqlite3_column_count(stmt);
-      for (int i = 0; i < columnCount; i++) {
-        const char* columnName = sqlite3_column_name(stmt, i);
+    static void get_json(sqlite3_stmt* stmt, json& result) {
+      int column_count = sqlite3_column_count(stmt);
+      for (int i = 0; i < column_count; i++) {
+        const char* column_name = sqlite3_column_name(stmt, i);
         switch (sqlite3_column_type(stmt, i)) {
         case SQLITE_INTEGER:
-          result[columnName] = sqlite3_column_int(stmt, i);
+          result[column_name] = sqlite3_column_int(stmt, i);
           break;
         case SQLITE_FLOAT:
-          result[columnName] = sqlite3_column_double(stmt, i);
+          result[column_name] = sqlite3_column_double(stmt, i);
           break;
         case SQLITE_TEXT:
-          result[columnName] = (const char*)sqlite3_column_text(stmt, i);
+          result[column_name] = (const char*)sqlite3_column_text(stmt, i);
           break;
         case SQLITE_BLOB:
-          result[columnName] = (const char*)sqlite3_column_blob(stmt, i);
+          result[column_name] = (const char*)sqlite3_column_blob(stmt, i);
           break;
         case SQLITE_NULL:
-          result[columnName] = nullptr;
+          result[column_name] = nullptr;
           break;
         }
       }
     }
 
     template<typename T, typename... Args>
-    static void bindParams(sqlite3_stmt* stmt, int index, T value, Args... args) {
+    static void bind_params(sqlite3_stmt* stmt, int index, T value, Args... args) {
       if constexpr (std::is_integral_v<T>) {
         sqlite3_bind_int(stmt, index, value);
       }
@@ -99,14 +100,14 @@ namespace SQLite {
       else if constexpr (std::is_same_v<T, std::string>) {
         sqlite3_bind_text(stmt, index, value.c_str(), -1, SQLITE_TRANSIENT);
       }
-      bindParams(stmt, index + 1, args...);
+      bind_params(stmt, index + 1, args...);
     }
 
-    static void bindParams(sqlite3_stmt* stmt, int index) {
+    static void bind_params(sqlite3_stmt* stmt, int index) {
       // No-op for base case
     }
 
-    static sqlite3* openDatabase() {
+    static sqlite3* open_database() {
       sqlite3* db;
       spdlog::info("Opening database...");
       int rc = sqlite3_open(DB_FILE_NAME, &db);
@@ -119,7 +120,7 @@ namespace SQLite {
       return db;
     }
 
-    static bool closeDatabase(sqlite3* db) {
+    static bool close_database(sqlite3* db) {
       int rc = sqlite3_close(db);
       if (rc) {
         spdlog::error("Can't close database: {}", sqlite3_errmsg(db));
@@ -129,6 +130,6 @@ namespace SQLite {
       return true;
     }
   };
-}  // namespace SQLite
+}  // namespace sqlite
 
-#endif  // SQLITEDATABASE_H
+#endif  // SQLITE_DATABASE_H

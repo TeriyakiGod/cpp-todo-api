@@ -11,98 +11,95 @@ using json = nlohmann::json;
 #include "../db.h"
 #include "../models/user.h"
 
-//TODO: add user authentication
+#define SQL_CREATE_USER_TABLE "../sql/user/create_user_table.sql"
+#define SQL_CHECK_IF_USER_EXISTS "../sql/user/check_if_user_exists.sql"
+#define SQL_CREATE_USER "../sql/user/create_user.sql"
+#define SQL_UPDATE_USER "../sql/user/update_user.sql"
+#define SQL_DELETE_USER "../sql/user/delete_user.sql"
+#define SQL_GET_USERS "../sql/user/get_users.sql"
+#define SQL_GET_USER "../sql/user/get_user.sql"
 
-#define SQL_CREATE_USER_TABLE "../sql/user/createUserTable.sql"
-#define SQL_CHECK_IF_USER_EXISTS "../sql/user/checkIfUserExists.sql"
-#define SQL_CREATE_USER "../sql/user/createUser.sql"
-#define SQL_UPDATE_USER "../sql/user/updateUser.sql"
-#define SQL_DELETE_USER "../sql/user/deleteUser.sql"
-#define SQL_GET_USER "../sql/user/getUser.sql"
-#define SQL_GET_USERS "../sql/user/getUsers.sql"
 namespace Controller {
     class User {
     public:
         User(httplib::Server& svr) {
-            prepareUserTable();
+            prepare_user_table();
 
             svr.Get("/user", [&](const Request& req, Response& res) {
-                res.set_content(getUsers(), "application/json");
-            });
+                res.set_content(get_users(), "application/json");
+                });
 
             svr.Get("/user/:string", [&](const Request& req, Response& res) {
-                res.set_content(getUser(req.path_params.at("string")), "application/json");
-            });
+                res.set_content(get_user(req.path_params.at("string")), "application/json");
+                });
 
             svr.Post("/user", [&](const Request& req, Response& res) {
-                res.set_content(createUser(req.body), "text/plain");
-            });
+                json j = json::parse(req.body);
+                auto new_user = j.template get<Model::User>();
+                res.set_content(create_user(new_user), "text/plain");
+                });
 
             svr.Put("/user", [&](const Request& req, Response& res) {
-                res.set_content(updateUser(req.body), "text/plain");
-            });
+                json j = json::parse(req.body);
+                auto new_user = j.template get<Model::User>();
+                res.set_content(update_user(new_user), "text/plain");
+                });
 
             svr.Delete("/user/:string", [&](const Request& req, Response& res) {
-                res.set_content(deleteUser(req.path_params.at("string")), "text/plain");
-            });
+                res.set_content(delete_user(req.path_params.at("string")), "text/plain");
+                });
         }
 
-    private:
-        void prepareUserTable(){
+        static void prepare_user_table() {
             std::ifstream file(SQL_CREATE_USER_TABLE);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-            SQLite::Database::executeQuery(sql);
+            sqlite::database::execute_query(sql);
         }
 
-        std::string getUsers() {
+        static std::string get_users() {
             std::ifstream file(SQL_GET_USERS);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-            json result = SQLite::Database::executeQuery(sql);
+            json result = sqlite::database::execute_query(sql);
             return result.dump();
         }
 
-        std::string getUser(const std::string& param) {
+        static std::string get_user(const std::string& param) {
             std::ifstream file(SQL_GET_USER);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-            json result = SQLite::Database::executeQuery(sql, param);
+            json result = sqlite::database::execute_query(sql, param);
             return result.dump();
         }
 
-        std::string createUser(const std::string& body) {
-            json j = json::parse(body);
-            auto newUser = j.template get<Model::User>();
-
+        static std::string create_user(const Model::User& new_user) {
             std::ifstream file1(SQL_CHECK_IF_USER_EXISTS);
             std::string sql1((std::istreambuf_iterator<char>(file1)), std::istreambuf_iterator<char>());
 
-            json result = SQLite::Database::executeQuery(sql1, newUser.email);
-            bool doesEmailExist = result["user_exists"].template get<int>();
-            spdlog::debug("doesEmailExist: {}", doesEmailExist);
-            if (!doesEmailExist) {
+            json result = sqlite::database::execute_query(sql1, new_user.email);
+            bool does_email_exist = result["user_exists"].template get<int>();
+            spdlog::debug("does_email_exist: {}", does_email_exist);
+            if (!does_email_exist) {
                 std::ifstream file2(SQL_CREATE_USER);
                 std::string sql2((std::istreambuf_iterator<char>(file2)), std::istreambuf_iterator<char>());
 
-                SQLite::Database::executeQuery(sql2, newUser.user_id, newUser.name, newUser.email, newUser.password);
+                sqlite::database::execute_query(sql2, new_user.user_id, new_user.name, new_user.email, new_user.password);
                 return "New user created";
-            } else {
-                return "User already exists";
+            }
+            else {
+                return "User with this email already exists, please use another email";
             }
         }
 
-        std::string updateUser(const std::string& body) {
-            json j = json::parse(body);
-            auto newUser = j.template get<Model::User>();
-
+        static std::string update_user(const Model::User& new_user) {
             std::ifstream file(SQL_UPDATE_USER);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-            SQLite::Database::executeQuery(sql, newUser.name, newUser.email, newUser.password, newUser.user_id);
+            sqlite::database::execute_query(sql, new_user.name, new_user.email, new_user.password, new_user.user_id);
             return "User updated";
         }
 
-        std::string deleteUser(const std::string& param) {
+        static std::string delete_user(const std::string& param) {
             std::ifstream file(SQL_DELETE_USER);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-            SQLite::Database::executeQuery(sql, param);
+            sqlite::database::execute_query(sql, param);
             return "User deleted";
         }
     };
