@@ -18,6 +18,7 @@ using json = nlohmann::json;
 #define SQL_DELETE_USER "../sql/user/deleteUser.sql"
 #define SQL_GET_USERS "../sql/user/getUsers.sql"
 #define SQL_GET_USER "../sql/user/getUser.sql"
+#define SQL_GET_USER_BY_EMAIL "../sql/user/getUserByEmail.sql"
 
 namespace Controller {
     class User {
@@ -63,11 +64,19 @@ namespace Controller {
             return result.dump();
         }
 
-        static std::string get_user(const std::string& param) {
+        static std::string get_user(const std::string& user_id) {
             std::ifstream file(SQL_GET_USER);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-            json result = sqlite::database::execute_query(sql, param);
+            json result = sqlite::database::execute_query(sql, user_id);
             return result.dump();
+        }
+
+        static Model::User get_user_by_email(const std::string& email) {
+            std::ifstream file(SQL_GET_USER_BY_EMAIL);
+            std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            json result = sqlite::database::execute_query(sql, email);
+            auto user = result.template get<Model::User>();
+            return user;
         }
 
         static std::string create_user(const Model::User& new_user) {
@@ -80,8 +89,7 @@ namespace Controller {
             if (!does_email_exist) {
                 std::ifstream file2(SQL_CREATE_USER);
                 std::string sql2((std::istreambuf_iterator<char>(file2)), std::istreambuf_iterator<char>());
-
-                sqlite::database::execute_query(sql2, new_user.user_id, new_user.name, new_user.email, new_user.password);
+                sqlite::database::execute_query(sql2, new_user.user_id, new_user.name, new_user.email, Tools::Hash::generate(new_user.password));
                 return "New user created";
             }
             else {

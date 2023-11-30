@@ -5,6 +5,8 @@
 #include <string>
 #include "../tools.h"
 #include <json.hpp>
+#include <sodium.h>
+#include <spdlog/spdlog.h>
 using json = nlohmann::json;
 using namespace std;
 
@@ -65,11 +67,15 @@ namespace Model
                 spdlog::error("Error: Unable to initialize libsodium");
                 return false;
             }
+            spdlog::debug("Entered password: {}", entered_password);
+            spdlog::debug("Hashed password: {}", password);
 
             int result = crypto_pwhash_str_verify(
                 password.c_str(),
                 entered_password.c_str(),
                 entered_password.length());
+
+            spdlog::debug("Result: {}", result);
 
             return result == 0;
         }
@@ -77,10 +83,16 @@ namespace Model
 
     void from_json(const json& j, User& u)
     {
-        u.user_id = Tools::Uuid::generate();
+        if (j.contains("user_id"))
+        {
+            j.at("user_id").get_to(u.user_id);
+        }
+        else {
+            u.user_id = Tools::Uuid::generate();
+        }
         j.at("name").get_to(u.name);
         j.at("email").get_to(u.email);
-        u.password = Tools::Hash::generate(j.at("password").get<string>());
+        j.at("password").get_to(u.password);
     }
 
     void to_json(json& j, const User& u)

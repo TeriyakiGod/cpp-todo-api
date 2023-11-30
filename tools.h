@@ -27,6 +27,7 @@ namespace Tools
     public:
         static std::string generate(std::string password)
         {
+            spdlog::debug("Password: {}", password);
             if (sodium_init() < 0)
             {
                 spdlog::error("Error: Unable to initialize libsodium");
@@ -47,6 +48,7 @@ namespace Tools
                 spdlog::error("Error: Unable to hash password");
                 return nullptr;
             }
+            spdlog::debug("Hashed password: {}", hashed_password);
             return hashed_password;
         }
     };

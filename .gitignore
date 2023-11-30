@@ -2,3 +2,4 @@
 build
 db.sqlite3
 .editorconfig
+secret.key

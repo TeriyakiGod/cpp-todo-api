@@ -5,6 +5,7 @@
 #include <httplib.h>
 #include "../models/user.h"
 #include "../controllers/user.h"
+#include <spdlog/spdlog.h>
 
 #define SECRET_KEY_FILE "../secret.key"
 
@@ -21,9 +22,10 @@ namespace Controller {
 
             svr.Post("/auth/signin", [&](const httplib::Request& req, httplib::Response& res) {
                 json j = json::parse(req.body);
-                auto user = j.template get<Model::User>();
+                //TODO: Add credential model
+                auto email = j.at("email").get<std::string>();
                 auto password = j.at("password").get<std::string>();
-                res.set_content(sign_in(user, password), "text/plain");
+                res.set_content(sign_in(email, password), "text/plain");
                 });
 
         }
@@ -34,7 +36,12 @@ namespace Controller {
             }
             return Controller::User::create_user(user);
         }
-        static std::string sign_in(Model::User user, std::string password) {
+        static std::string sign_in(std::string email, std::string password) {
+            auto user = Controller::User::get_user_by_email(email);
+            if (user.user_id.empty()) {
+                return "Wrong email, please try again.";
+            }
+            spdlog::info("User: {}", user.email);
             if (user.validate_password(password)) {
                 return generate_token(user);
             }
