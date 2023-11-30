@@ -11,13 +11,13 @@ using json = nlohmann::json;
 #include "../db.h"
 #include "../models/user.h"
 
-#define SQL_CREATE_USER_TABLE "../sql/user/create_user_table.sql"
-#define SQL_CHECK_IF_USER_EXISTS "../sql/user/check_if_user_exists.sql"
-#define SQL_CREATE_USER "../sql/user/create_user.sql"
-#define SQL_UPDATE_USER "../sql/user/update_user.sql"
-#define SQL_DELETE_USER "../sql/user/delete_user.sql"
-#define SQL_GET_USERS "../sql/user/get_users.sql"
-#define SQL_GET_USER "../sql/user/get_user.sql"
+#define SQL_CREATE_USER_TABLE "../sql/user/createUserTable.sql"
+#define SQL_CHECK_IF_USER_EXISTS "../sql/user/checkIfUserExists.sql"
+#define SQL_CREATE_USER "../sql/user/createUser.sql"
+#define SQL_UPDATE_USER "../sql/user/updateUser.sql"
+#define SQL_DELETE_USER "../sql/user/deleteUser.sql"
+#define SQL_GET_USERS "../sql/user/getUsers.sql"
+#define SQL_GET_USER "../sql/user/getUser.sql"
 
 namespace Controller {
     class User {

@@ -11,12 +11,12 @@ using json = nlohmann::json;
 #include "../db.h"
 #include "../models/todo.h"
 
-#define SQL_CREATE_TODO_TABLE "../sql/todo/create_todo_table.sql"
-#define SQL_CREATE_TODO "../sql/todo/create_todo.sql"
-#define SQL_UPDATE_TODO "../sql/todo/update_todo.sql"
-#define SQL_DELETE_TODO "../sql/todo/delete_todo.sql"
-#define SQL_GET_TODO "../sql/todo/get_todo.sql"
-#define SQL_GET_TODOS "../sql/todo/get_todos.sql"
+#define SQL_CREATE_TODO_TABLE "../sql/todo/createTodoTable.sql"
+#define SQL_CREATE_TODO "../sql/todo/createTodo.sql"
+#define SQL_UPDATE_TODO "../sql/todo/updateTodo.sql"
+#define SQL_DELETE_TODO "../sql/todo/deleteTodo.sql"
+#define SQL_GET_TODO "../sql/todo/getTodo.sql"
+#define SQL_GET_TODOS "../sql/todo/getTodos.sql"
 
 namespace Controller {
     class Todo {
