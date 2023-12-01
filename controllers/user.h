@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <httplib.h>
+#include "../src/db.h"
 using namespace httplib;
 #include <json.hpp>
 using json = nlohmann::json;
@@ -26,40 +27,55 @@ namespace Controller {
         User(httplib::Server& svr) {
             prepare_user_table();
 
-            svr.Get("/user", [&](const Request& req, Response& res) {
-                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config", "server_url").c_str());
-                res.set_content(get_users(), "application/json");
-                });
-
-            svr.Get("/user/:string", [&](const Request& req, Response& res) {
-                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config", "server_url").c_str());
-                res.set_content(get_user(req.path_params.at("string")), "application/json");
-                });
-
-            svr.Post("/user", [&](const Request& req, Response& res) {
-                json j = json::parse(req.body);
-                auto new_user = j.template get<Model::User>();
-                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config", "server_url").c_str());
-                res.set_content(create_user(new_user), "text/plain");
-                });
-
-            svr.Put("/user", [&](const Request& req, Response& res) {
-                json j = json::parse(req.body);
-                auto new_user = j.template get<Model::User>();
-                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config", "server_url").c_str());
-                res.set_content(update_user(new_user), "text/plain");
-                });
-
-            svr.Delete("/user/:string", [&](const Request& req, Response& res) {
-                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config", "server_url").c_str());
-                res.set_content(delete_user(req.path_params.at("string")), "text/plain");
-                });
+            svr.Get("/user", get_users_handler());
+            svr.Get("/user/:string", get_user_handler());
+            svr.Post("/user", post_user_handler());
+            svr.Put("/user", put_user_handler());
+            svr.Delete("/user/:string", delete_user_handler());
         }
 
         static void prepare_user_table() {
             std::ifstream file(SQL_CREATE_USER_TABLE);
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             Sqlite::Database::execute_query(sql);
+        }
+
+        static Server::Handler get_users_handler() {
+            return [](const Request& req, Response& res) {
+                res.set_content(get_users(), "application/json");
+                };
+        }
+
+        static Server::Handler get_user_handler() {
+            return [](const Request& req, Response& res) {
+                res.set_content(get_user(req.path_params.at("string")), "application/json");
+                };
+        }
+
+        static Server::Handler post_user_handler() {
+            return [](const Request& req, Response& res) {
+                json j = json::parse(req.body);
+                auto new_user = j.template get<Model::User>();
+                new_user.user_id = Tools::Uuid::generate();
+                new_user.password = Tools::Hash::generate(new_user.password);
+                res.set_content(create_user(new_user), "text/plain");
+                };
+        }
+
+        static Server::Handler put_user_handler() {
+            return [](const Request& req, Response& res) {
+                json j = json::parse(req.body);
+                auto new_user = j.template get<Model::User>();
+                new_user.user_id = Tools::Uuid::generate();
+                new_user.password = Tools::Hash::generate(new_user.password);
+                res.set_content(update_user(new_user), "text/plain");
+                };
+        }
+
+        static Server::Handler delete_user_handler() {
+            return [](const Request& req, Response& res) {
+                res.set_content(delete_user(req.path_params.at("string")), "text/plain");
+                };
         }
 
         static std::string get_users() {
@@ -74,6 +90,14 @@ namespace Controller {
             std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
             json result = Sqlite::Database::execute_query(sql, user_id);
             return result.dump();
+        }
+
+        static Model::User get_user_by_id(const std::string& user_id) {
+            std::ifstream file(SQL_GET_USER);
+            std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            json result = Sqlite::Database::execute_query(sql, user_id);
+            auto user = result.template get<Model::User>();
+            return user;
         }
 
         static Model::User get_user_by_email(const std::string& email) {

@@ -2,7 +2,6 @@
 #define MODEL_TODO_H
 
 #include <string>
-#include "../src/tools.h"
 #include <json.hpp>
 using json = nlohmann::json;
 using namespace std;
@@ -20,11 +19,20 @@ namespace Model
 
     void from_json(const json& j, Todo& t)
     {
-        t.todo_id = Tools::Uuid::generate();
-        j.at("user_id").get_to(t.user_id);
-        j.at("title").get_to(t.title);
-        j.at("description").get_to(t.description);
-        j.at("status").get_to(t.status);
+        auto it = j.find("todo_id");
+        if (it != j.end()) it->get_to(t.todo_id);
+
+        it = j.find("user_id");
+        if (it != j.end()) it->get_to(t.user_id);
+
+        it = j.find("title");
+        if (it != j.end()) it->get_to(t.title);
+
+        it = j.find("description");
+        if (it != j.end()) it->get_to(t.description);
+
+        it = j.find("status");
+        if (it != j.end()) it->get_to(t.status);
     }
 
     void to_json(json& j, const Todo& t)

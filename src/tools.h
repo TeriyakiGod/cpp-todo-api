@@ -6,11 +6,42 @@
 #include <string>
 #include <spdlog/spdlog.h>
 #include <pugixml/pugixml.hpp>
+#include <jwt-cpp/jwt.h>
 
 #define RESOURCE_PATH "../res/"
 
+#define SECRET_KEY_FILE "../secret.key"
+#define JWT_TOKEN_EXPIRATION 10
+
 namespace Tools
 {
+    class Jwt {
+    public:
+        static std::string generate_token(std::string user_id) {
+            std::ifstream file(SECRET_KEY_FILE);
+            std::string secret_key((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+            std::string token = jwt::create()
+                .set_issuer("auth0")
+                .set_type("JWS")
+                .set_payload_claim("user_id", jwt::claim(user_id))
+                //.set_expires_at(std::chrono::system_clock::now() + std::chrono::seconds{ 10 })
+                .sign(jwt::algorithm::hs256{ secret_key });
+            return token;
+        }
+        static std::string verify_user(std::string token) {
+            std::ifstream file(SECRET_KEY_FILE);
+            std::string secret_key((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+            auto decoded_token = jwt::decode(token);
+            auto verifier = jwt::verify()
+                .allow_algorithm(jwt::algorithm::hs256{ secret_key })
+                .with_issuer("auth0");
+            verifier.verify(decoded_token);
+            return decoded_token.get_payload_claim("user_id").as_string();
+        }
+    };
+
     class Uuid
     {
     public:
@@ -26,6 +57,7 @@ namespace Tools
             return uuids::to_string(gen());
         }
     };
+
     class Hash
     {
     public:

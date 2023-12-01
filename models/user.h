@@ -3,7 +3,6 @@
 
 #include <regex>
 #include <string>
-#include "../src/tools.h"
 #include <json.hpp>
 #include <sodium.h>
 #include <spdlog/spdlog.h>
@@ -79,13 +78,7 @@ namespace Model
 
     void from_json(const json& j, User& u)
     {
-        if (j.contains("user_id"))
-        {
-            j.at("user_id").get_to(u.user_id);
-        }
-        else {
-            u.user_id = Tools::Uuid::generate();
-        }
+        j.at("user_id").get_to(u.user_id);
         j.at("name").get_to(u.name);
         j.at("email").get_to(u.email);
         j.at("password").get_to(u.password);

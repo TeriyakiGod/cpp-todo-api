@@ -1,4 +1,6 @@
 SELECT
     *
 FROM
-    Todos;
+    Todos
+WHERE
+    user_id = ?;

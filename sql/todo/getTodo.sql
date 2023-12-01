@@ -3,4 +3,5 @@ SELECT
 FROM
     Todos
 WHERE
-    todo_id = ?;
+    todo_id = ?
+    AND user_id = ?;
