@@ -5,9 +5,13 @@
 #include <httplib.h>
 #include "../models/user.h"
 #include "../controllers/user.h"
+#include "../tools.h"
 #include <spdlog/spdlog.h>
+#include <json.hpp>
+using json = nlohmann::json;
 
 #define SECRET_KEY_FILE "../secret.key"
+#define JWT_TOKEN_EXPIRATION 10
 
 namespace Controller {
     class Auth
@@ -17,6 +21,7 @@ namespace Controller {
             svr.Post("/auth/signup", [&](const httplib::Request& req, httplib::Response& res) {
                 json j = json::parse(req.body);
                 auto new_user = j.template get<Model::User>();
+                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config.xml", "server_url").c_str());
                 res.set_content(sign_up(new_user), "text/plain");
                 });
 
@@ -25,6 +30,7 @@ namespace Controller {
                 //TODO: Add credential model
                 auto email = j.at("email").get<std::string>();
                 auto password = j.at("password").get<std::string>();
+                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config.xml", "server_url").c_str());
                 res.set_content(sign_in(email, password), "text/plain");
                 });
 

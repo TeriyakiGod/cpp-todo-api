@@ -10,6 +10,7 @@ using json = nlohmann::json;
 #include <spdlog/spdlog.h>
 #include "../db.h"
 #include "../models/todo.h"
+#include "../tools.h"
 
 #define SQL_CREATE_TODO_TABLE "../sql/todo/createTodoTable.sql"
 #define SQL_CREATE_TODO "../sql/todo/createTodo.sql"
@@ -25,26 +26,31 @@ namespace Controller {
             prepare_todo_table();
 
             svr.Get("/todo", [&](const Request& req, Response& res) {
+                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config.xml", "server_url").c_str());
                 res.set_content(get_todos(), "application/json");
                 });
 
             svr.Get("/todo/:string", [&](const Request& req, Response& res) {
+                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config.xml", "server_url").c_str());
                 res.set_content(get_todo_by_id(req.path_params.at("string")), "application/json");
                 });
 
             svr.Post("/todo", [&](const Request& req, Response& res) {
                 json j = json::parse(req.body);
                 auto new_todo = j.template get<Model::Todo>();
+                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config.xml", "server_url").c_str());
                 res.set_content(create_todo_from_request(new_todo), "text/plain");
                 });
 
             svr.Put("/todo", [&](const Request& req, Response& res) {
                 json j = json::parse(req.body);
                 auto new_todo = j.template get<Model::Todo>();
+                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config.xml", "server_url").c_str());
                 res.set_content(update_todo_from_request(new_todo), "text/plain");
                 });
 
             svr.Delete("/todo/:string", [&](const Request& req, Response& res) {
+                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config.xml", "server_url").c_str());
                 res.set_content(delete_todo_by_id(req.path_params.at("string")), "text/plain");
                 });
         }

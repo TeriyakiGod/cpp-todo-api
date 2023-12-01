@@ -27,26 +27,31 @@ namespace Controller {
             prepare_user_table();
 
             svr.Get("/user", [&](const Request& req, Response& res) {
+                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config.xml", "server_url").c_str());
                 res.set_content(get_users(), "application/json");
                 });
 
             svr.Get("/user/:string", [&](const Request& req, Response& res) {
+                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config.xml", "server_url").c_str());
                 res.set_content(get_user(req.path_params.at("string")), "application/json");
                 });
 
             svr.Post("/user", [&](const Request& req, Response& res) {
                 json j = json::parse(req.body);
                 auto new_user = j.template get<Model::User>();
+                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config.xml", "server_url").c_str());
                 res.set_content(create_user(new_user), "text/plain");
                 });
 
             svr.Put("/user", [&](const Request& req, Response& res) {
                 json j = json::parse(req.body);
                 auto new_user = j.template get<Model::User>();
+                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config.xml", "server_url").c_str());
                 res.set_content(update_user(new_user), "text/plain");
                 });
 
             svr.Delete("/user/:string", [&](const Request& req, Response& res) {
+                res.set_header("Access-Control-Allow-Origin", Tools::Resource::load_string("config.xml", "server_url").c_str());
                 res.set_content(delete_user(req.path_params.at("string")), "text/plain");
                 });
         }

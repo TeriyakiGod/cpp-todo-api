@@ -4,6 +4,8 @@
 #include <uuid.h>
 #include <sodium.h>
 #include <string>
+#include <spdlog/spdlog.h>
+#include <pugixml/pugixml.hpp>
 
 namespace Tools
 {
@@ -50,6 +52,24 @@ namespace Tools
             }
             spdlog::debug("Hashed password: {}", hashed_password);
             return hashed_password;
+        }
+    };
+    class Resource {
+    public:
+        static std::string load_string(std::string file, std::string name) {
+            pugi::xml_document doc;
+            std::string file_path = "res/" + file;
+            pugi::xml_parse_result result = doc.load_file(file_path.c_str());
+            if (!result) {
+                spdlog::error("Error: Unable to load file {}", file);
+                return nullptr;
+            }
+            auto node = doc.child(name.c_str());
+            if (node.empty()) {
+                spdlog::error("Error: Unable to find node {}", name);
+                return nullptr;
+            }
+            return node.text().as_string();
         }
     };
 }
