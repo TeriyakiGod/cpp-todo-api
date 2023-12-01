@@ -7,6 +7,8 @@
 #include <spdlog/spdlog.h>
 #include <pugixml/pugixml.hpp>
 
+#define RESOURCE_PATH "../res/"
+
 namespace Tools
 {
     class Uuid
@@ -50,26 +52,26 @@ namespace Tools
                 spdlog::error("Error: Unable to hash password");
                 return nullptr;
             }
-            spdlog::debug("Hashed password: {}", hashed_password);
             return hashed_password;
         }
     };
     class Resource {
     public:
-        static std::string load_string(std::string file, std::string name) {
+        static std::string load_string(std::string res, std::string name) {
             pugi::xml_document doc;
-            std::string file_path = "res/" + file;
+            std::string file_path = RESOURCE_PATH + res + ".xml";
             pugi::xml_parse_result result = doc.load_file(file_path.c_str());
             if (!result) {
-                spdlog::error("Error: Unable to load file {}", file);
+                spdlog::error("Error: Unable to load file {}", res + ".xml");
                 return nullptr;
             }
-            auto node = doc.child(name.c_str());
-            if (node.empty()) {
-                spdlog::error("Error: Unable to find node {}", name);
-                return nullptr;
+            for (pugi::xml_node string_node = doc.child(res.c_str()).first_child(); string_node; string_node = string_node.next_sibling()) {
+                if (std::string(string_node.attribute("name").value()) == name) {
+                    return string_node.text().as_string();
+                }
             }
-            return node.text().as_string();
+            spdlog::error("Error: Unable to find node {}", res + "/" + name);
+            return nullptr;
         }
     };
 }

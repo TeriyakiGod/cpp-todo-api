@@ -3,7 +3,7 @@
 
 #include <regex>
 #include <string>
-#include "../tools.h"
+#include "../src/tools.h"
 #include <json.hpp>
 #include <sodium.h>
 #include <spdlog/spdlog.h>
@@ -67,15 +67,11 @@ namespace Model
                 spdlog::error("Error: Unable to initialize libsodium");
                 return false;
             }
-            spdlog::debug("Entered password: {}", entered_password);
-            spdlog::debug("Hashed password: {}", password);
 
             int result = crypto_pwhash_str_verify(
                 password.c_str(),
                 entered_password.c_str(),
                 entered_password.length());
-
-            spdlog::debug("Result: {}", result);
 
             return result == 0;
         }

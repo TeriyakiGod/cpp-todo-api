@@ -1,2 +1,4 @@
-<xml version="1.0" encoding="UTF-8"?>
-<string name="server_url">http://localhost:8080</string>
+<?xml version="1.0" encoding="UTF-8"?>
+<config name="configv1">
+    <string name="server_url">http://localhost:8080</string>
+</config>

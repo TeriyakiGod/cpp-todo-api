@@ -1,10 +1,10 @@
 #include <iostream>
 #include "db.h"
-#include "controllers/todo.h"
-#include "controllers/user.h"
-#include "controllers/auth.h"
-#include "httplib.h"
-#include "spdlog/spdlog.h"
+#include "../controllers/todo.h"
+#include "../controllers/user.h"
+#include "../controllers/auth.h"
+#include <httplib.h>
+#include <spdlog/spdlog.h>
 
 int main(int, char**)
 {

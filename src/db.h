@@ -9,8 +9,8 @@ using json = nlohmann::json;
 
 #define DB_FILE_NAME "../db.sqlite3"
 
-namespace sqlite {
-  class database {
+namespace Sqlite {
+  class Database {
   public:
     template<typename... Args>
     static json execute_query(const std::string& sql, Args... args) {
@@ -130,6 +130,6 @@ namespace sqlite {
       return true;
     }
   };
-}  // namespace sqlite
+}  // namespace Sqlite
 
 #endif  // SQLITE_DATABASE_H
