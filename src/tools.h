@@ -7,6 +7,7 @@
 #include <spdlog/spdlog.h>
 #include <pugixml/pugixml.hpp>
 #include <jwt-cpp/jwt.h>
+#include <fstream>
 
 #define RESOURCE_PATH "../res/"
 
@@ -20,11 +21,12 @@ namespace Tools
         static std::string generate_token(std::string user_id) {
             std::ifstream file(SECRET_KEY_FILE);
             std::string secret_key((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
+            std::string timestamp = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
             std::string token = jwt::create()
                 .set_issuer("auth0")
                 .set_type("JWS")
                 .set_payload_claim("user_id", jwt::claim(user_id))
+                .set_payload_claim("timestamp", jwt::claim(timestamp))
                 //.set_expires_at(std::chrono::system_clock::now() + std::chrono::seconds{ 10 })
                 .sign(jwt::algorithm::hs256{ secret_key });
             return token;
@@ -33,12 +35,18 @@ namespace Tools
             std::ifstream file(SECRET_KEY_FILE);
             std::string secret_key((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-            auto decoded_token = jwt::decode(token);
-            auto verifier = jwt::verify()
-                .allow_algorithm(jwt::algorithm::hs256{ secret_key })
-                .with_issuer("auth0");
-            verifier.verify(decoded_token);
-            return decoded_token.get_payload_claim("user_id").as_string();
+            try {
+                auto decoded_token = jwt::decode(token);
+                auto verifier = jwt::verify()
+                    .allow_algorithm(jwt::algorithm::hs256{ secret_key })
+                    .with_issuer("auth0");
+                verifier.verify(decoded_token);
+                return decoded_token.get_payload_claim("user_id").as_string();
+            }
+            catch (const jwt::token_verification_exception& e) {
+                spdlog::error("Error: Token verification failed - {}", e.what());
+                return "";
+            }
         }
     };
 
@@ -67,7 +75,7 @@ namespace Tools
             if (sodium_init() < 0)
             {
                 spdlog::error("Error: Unable to initialize libsodium");
-                return nullptr;
+                return "";
             }
 
             unsigned char salt[crypto_pwhash_SALTBYTES];
@@ -82,7 +90,7 @@ namespace Tools
                 crypto_pwhash_MEMLIMIT_INTERACTIVE) != 0)
             {
                 spdlog::error("Error: Unable to hash password");
-                return nullptr;
+                return "";
             }
             return hashed_password;
         }
@@ -95,7 +103,7 @@ namespace Tools
             pugi::xml_parse_result result = doc.load_file(file_path.c_str());
             if (!result) {
                 spdlog::error("Error: Unable to load file {}", res + ".xml");
-                return nullptr;
+                return "";
             }
             for (pugi::xml_node string_node = doc.child(res.c_str()).first_child(); string_node; string_node = string_node.next_sibling()) {
                 if (std::string(string_node.attribute("name").value()) == name) {
@@ -103,7 +111,7 @@ namespace Tools
                 }
             }
             spdlog::error("Error: Unable to find node {}", res + "/" + name);
-            return nullptr;
+            return "";
         }
     };
 }

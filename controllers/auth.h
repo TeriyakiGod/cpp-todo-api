@@ -21,13 +21,25 @@ namespace Controller {
     private:
         static Server::Handler sign_up_handler() {
             return [&](const httplib::Request& req, httplib::Response& res) {
-                res.set_content(sign_up(req.body), "text/plain");
+                auto result = sign_up(req.body);
+                if (result.empty()) {
+                    res.status = 400;
+                    res.set_content("Wrong email, name or password.", "text/plain");
+                    return;
+                }
+                res.set_content(result, "text/plain");
                 };
         }
 
         static Server::Handler sign_in_handler() {
             return [&](const httplib::Request& req, httplib::Response& res) {
-                res.set_content(sign_in(req.body), "text/plain");
+                std::string token = sign_in(req.body);
+                if (token.empty()) {
+                    res.status = 401;
+                    res.set_content("Invalid credentials", "text/plain");
+                    return;
+                }
+                res.set_content(token, "text/plain");
                 };
         }
 
@@ -35,25 +47,24 @@ namespace Controller {
             json j = json::parse(body);
             auto new_user = j.template get<Model::User>();
             if (!new_user.check_fields()) {
-                return "Invalid name, email or password, please correct and try again.";
+                return "";
             }
             return Controller::User::create_user(new_user);
         }
 
         static std::string sign_in(const std::string& body) {
             json j = json::parse(body);
-            //TODO: Add credential model
             auto email = j.at("email").get<std::string>();
             auto password = j.at("password").get<std::string>();
             auto user = Controller::User::get_user_by_email(email);
             if (user.user_id.empty()) {
-                return "Wrong email, please try again.";
+                return "";
             }
             if (user.validate_password(password)) {
                 return Tools::Jwt::generate_token(user.user_id);
             }
             else {
-                return "Invalid password, please try again.";
+                return "";
             }
         }
     };

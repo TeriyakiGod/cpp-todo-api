@@ -78,10 +78,14 @@ namespace Model
 
     void from_json(const json& j, User& u)
     {
-        j.at("user_id").get_to(u.user_id);
-        j.at("name").get_to(u.name);
-        j.at("email").get_to(u.email);
-        j.at("password").get_to(u.password);
+        auto it = j.find("user_id");
+        if (it != j.end()) it->get_to(u.user_id);
+        it = j.find("name");
+        if (it != j.end()) it->get_to(u.name);
+        it = j.find("email");
+        if (it != j.end()) it->get_to(u.email);
+        it = j.find("password");
+        if (it != j.end()) it->get_to(u.password);
     }
 
     void to_json(json& j, const User& u)

@@ -38,9 +38,16 @@ namespace Controller {
         static Server::Handler get_todos_handler() {
             return [&](const Request& req, Response& res) {
                 std::string token = req.get_header_value("Authorization");
+                if (token.empty())
+                {
+                    res.status = 401;
+                    res.set_content("Invalid token", "text/plain");
+                    return;
+                }
                 std::string user_id = Tools::Jwt::verify_user(token);
                 if (user_id.empty())
                 {
+                    res.status = 401;
                     res.set_content("Invalid token", "text/plain");
                     return;
                 }
@@ -52,9 +59,16 @@ namespace Controller {
             return [&](const Request& req, Response& res) {
                 std::string todo_id = req.path_params.at("string");
                 std::string token = req.get_header_value("Authorization");
+                if (token.empty())
+                {
+                    res.status = 401;
+                    res.set_content("Invalid token", "text/plain");
+                    return;
+                }
                 std::string user_id = Tools::Jwt::verify_user(token);
                 if (user_id.empty())
                 {
+                    res.status = 401;
                     res.set_content("Invalid token", "text/plain");
                     return;
                 }
@@ -68,9 +82,16 @@ namespace Controller {
                 auto new_todo = j.template get<Model::Todo>();
                 new_todo.todo_id = Tools::Uuid::generate();
                 std::string token = req.get_header_value("Authorization");
+                if (token.empty())
+                {
+                    res.status = 401;
+                    res.set_content("Invalid token", "text/plain");
+                    return;
+                }
                 std::string user_id = Tools::Jwt::verify_user(token);
                 if (user_id.empty())
                 {
+                    res.status = 401;
                     res.set_content("Invalid token", "text/plain");
                     return;
                 }
@@ -85,9 +106,16 @@ namespace Controller {
                 auto new_todo = j.template get<Model::Todo>();
                 new_todo.todo_id = Tools::Uuid::generate();
                 std::string token = req.get_header_value("Authorization");
+                if (token.empty())
+                {
+                    res.status = 401;
+                    res.set_content("Invalid token", "text/plain");
+                    return;
+                }
                 std::string user_id = Tools::Jwt::verify_user(token);
                 if (user_id.empty())
                 {
+                    res.status = 401;
                     res.set_content("Invalid token", "text/plain");
                     return;
                 }
@@ -99,10 +127,17 @@ namespace Controller {
         static Server::Handler delete_todo_by_id_handler() {
             return [&](const Request& req, Response& res) {
                 std::string token = req.get_header_value("Authorization");
+                if (token.empty())
+                {
+                    res.status = 401;
+                    res.set_content("Invalid token", "text/plain");
+                    return;
+                }
                 std::string user_id = Tools::Jwt::verify_user(token);
                 std::string todo_id = req.path_params.at("string");
                 if (user_id.empty())
                 {
+                    res.status = 401;
                     res.set_content("Invalid token", "text/plain");
                     return;
                 }
