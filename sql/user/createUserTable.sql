@@ -3,5 +3,6 @@ CREATE TABLE
         user_id TEXT PRIMARY KEY,
         name TEXT,
         email TEXT,
-        password TEXT
+        password TEXT,
+        role INT
     );

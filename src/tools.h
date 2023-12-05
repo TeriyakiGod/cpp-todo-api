@@ -27,7 +27,7 @@ namespace Tools
                 .set_type("JWS")
                 .set_payload_claim("user_id", jwt::claim(user_id))
                 .set_payload_claim("timestamp", jwt::claim(timestamp))
-                //.set_expires_at(std::chrono::system_clock::now() + std::chrono::seconds{ 10 })
+                .set_expires_at(std::chrono::system_clock::now() + std::chrono::seconds{ 600 })
                 .sign(jwt::algorithm::hs256{ secret_key });
             return token;
         }
@@ -41,6 +41,9 @@ namespace Tools
                     .allow_algorithm(jwt::algorithm::hs256{ secret_key })
                     .with_issuer("auth0");
                 verifier.verify(decoded_token);
+                if (decoded_token.get_expires_at() < std::chrono::system_clock::now()) {
+                    return "Token expired";
+                }
                 return decoded_token.get_payload_claim("user_id").as_string();
             }
             catch (const jwt::token_verification_exception& e) {

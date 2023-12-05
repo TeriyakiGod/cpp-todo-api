@@ -11,12 +11,20 @@ using namespace std;
 
 namespace Model
 {
+    enum Role
+    {
+        ADMIN,
+        USER,
+        NONE
+    };
+
     struct User
     {
         string user_id;
         string name;
         string email;
         string password;
+        Role role;
 
         bool check_name() const
         {
@@ -86,6 +94,8 @@ namespace Model
         if (it != j.end()) it->get_to(u.email);
         it = j.find("password");
         if (it != j.end()) it->get_to(u.password);
+        it = j.find("role");
+        if (it != j.end()) it->get_to(u.role);
     }
 
     void to_json(json& j, const User& u)
@@ -94,7 +104,8 @@ namespace Model
             {"user_id", u.user_id},
             {"name", u.name},
             {"email", u.email},
-            {"password", u.password}
+            {"password", u.password},
+            {"role", u.role}
         };
     }
 } // namespace Model
