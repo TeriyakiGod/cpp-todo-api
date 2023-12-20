@@ -9,7 +9,11 @@ find_package(OpenSSL REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-add_executable(cpp-todo-app src/main.cpp src/db.h src/tools.h controllers/todo.h controllers/user.h controllers/auth.h models/todo.h models/user.h include/pugixml/pugixml.cpp)
+file(GLOB CONTROLLERS controllers/*.cpp)
+file(GLOB MODELS models/*.cpp)
+file(GLOB SOURCE src/*.cpp)
+
+add_executable(cpp-todo-app ${CONTROLLERS} ${MODELS} ${SOURCE})
 
 target_link_libraries(cpp-todo-app PRIVATE SQLite::SQLite3)
 target_link_libraries(cpp-todo-app PRIVATE spdlog::spdlog)

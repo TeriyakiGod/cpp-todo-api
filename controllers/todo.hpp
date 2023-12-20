@@ -7,10 +7,10 @@
 using namespace httplib;
 #include <json.hpp>
 using json = nlohmann::json;
-#include "../models/todo.h"
-#include "../src/db.h"
-#include "../src/tools.h"
-#include "auth.h"
+#include "../models/todo.hpp"
+#include "../src/db.hpp"
+#include "../src/tools.hpp"
+#include "auth.hpp"
 #include <spdlog/spdlog.h>
 
 #define SQL_CREATE_TODO_TABLE "../sql/todo/createTodoTable.sql"
@@ -23,6 +23,8 @@ using json = nlohmann::json;
 namespace Controller {
 class Todo {
 public:
+    /// @brief This will register all the routes related to todo
+    /// @param svr The server object
     Todo(httplib::Server &svr) {
         prepare_todo_table();
 
@@ -34,7 +36,8 @@ public:
     }
 
 private:
-
+    /// @brief This will return the handler for getting all the todos
+    /// @return Server::Handler Returns the handler for getting all the todos
     static Server::Handler get_todos_handler() {
         return [&](const Request &req, Response &res) {
             std::string user_id = res.get_header_value("user_id");
@@ -42,6 +45,8 @@ private:
         };
     }
 
+    /// @brief This will return the handler for getting a todo by id
+    /// @return Server::Handler Returns the handler for getting a todo by id
     static Server::Handler get_todo_by_id_handler() {
         return [&](const Request &req, Response &res) {
             std::string todo_id = req.path_params.at("string");
@@ -50,6 +55,8 @@ private:
         };
     }
 
+    /// @brief This will return the handler for creating a todo
+    /// @return Server::Handler Returns the handler for creating a todo
     static Server::Handler post_todo_handler() {
         return [&](const Request &req, Response &res) {
             json j = json::parse(req.body);
@@ -60,6 +67,8 @@ private:
         };
     }
 
+    /// @brief This will return the handler for updating a todo
+    /// @return Server::Handler Returns the handler for updating a todo
     static Server::Handler put_todo_handler() {
         return [&](const Request &req, Response &res) {
             json j = json::parse(req.body);
@@ -70,6 +79,8 @@ private:
         };
     }
 
+    /// @brief This will return the handler for deleting a todo by id
+    /// @return Server::Handler Returns the handler for deleting a todo by id
     static Server::Handler delete_todo_by_id_handler() {
         return [&](const Request &req, Response &res) {
             std::string todo_id = req.path_params.at("string");
@@ -78,12 +89,16 @@ private:
         };
     }
 
+    /// @brief This will prepare the todo table
     static void prepare_todo_table() {
         std::ifstream file(SQL_CREATE_TODO_TABLE);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         Sqlite::Database::execute_query(sql);
     }
 
+    /// @brief This will return all the todos
+    /// @param user_id The user_id of the user
+    /// @return std::string Returns the todos in json format as string
     static std::string get_todos(std::string user_id) {
         std::ifstream file(SQL_GET_TODOS);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -91,6 +106,10 @@ private:
         return result.dump();
     }
 
+    /// @brief This will return a todo by id
+    /// @param id The id of the todo
+    /// @param user_id The user_id of the user
+    /// @return std::string Returns the todo in json format as string
     static std::string get_todo_by_id(const std::string &id, const std::string &user_id) {
         std::ifstream file(SQL_GET_TODO);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -98,6 +117,9 @@ private:
         return result.dump();
     }
 
+    /// @brief This will create a new todo
+    /// @param new_todo The todo object
+    /// @return std::string Returns the message
     static std::string create_todo(const Model::Todo &new_todo) {
         std::ifstream file(SQL_CREATE_TODO);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -107,6 +129,9 @@ private:
         return "New todo created";
     }
 
+    /// @brief This will update a todo
+    /// @param new_todo The todo object
+    /// @return std::string Returns the message
     static std::string update_todo(const Model::Todo &new_todo) {
         std::ifstream file(SQL_UPDATE_TODO);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -115,6 +140,10 @@ private:
         return "Todo updated";
     }
 
+    /// @brief This will delete a todo
+    /// @param id The id of the todo
+    /// @param user_id The user_id of the user
+    /// @return std::string Returns the message
     static std::string delete_todo(const std::string &id, const std::string &user_id) {
         std::ifstream file(SQL_DELETE_TODO);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());

@@ -1,8 +1,8 @@
 #include <iostream>
-#include "db.h"
-#include "../controllers/todo.h"
-#include "../controllers/user.h"
-#include "../controllers/auth.h"
+#include "db.hpp"
+#include "../controllers/todo.hpp"
+#include "../controllers/user.hpp"
+#include "../controllers/auth.hpp"
 #include <httplib.h>
 #include <spdlog/spdlog.h>
 

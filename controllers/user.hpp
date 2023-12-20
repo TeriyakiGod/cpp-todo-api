@@ -1,15 +1,15 @@
 #ifndef USER_H
 #define USER_H
 
-#include "../src/db.h"
+#include "../src/db.hpp"
 #include <fstream>
 #include <httplib.h>
 #include <string>
 using namespace httplib;
 #include <json.hpp>
 using json = nlohmann::json;
-#include "../models/user.h"
-#include "../src/tools.h"
+#include "../models/user.hpp"
+#include "../src/tools.hpp"
 #include <spdlog/spdlog.h>
 
 #define SQL_CREATE_USER_TABLE "../sql/user/createUserTable.sql"
@@ -24,6 +24,8 @@ using json = nlohmann::json;
 namespace Controller {
 class User {
 public:
+    /// @brief This will register all the routes related to user
+    /// @param svr The server object
     User(httplib::Server &svr) {
         prepare_user_table();
 
@@ -34,24 +36,32 @@ public:
         svr.Delete("/user/:string", delete_user_handler());
     }
 
+    /// @brief This will return the handler for getting all the users
+    /// @return Server::Handler Returns the handler for getting all the users
     static void prepare_user_table() {
         std::ifstream file(SQL_CREATE_USER_TABLE);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         Sqlite::Database::execute_query(sql);
     }
 
+    /// @brief This will return the handler for getting all the users
+    /// @return Server::Handler Returns the handler for getting all the users
     static Server::Handler get_users_handler() {
         return [](const Request &req, Response &res) {
             res.set_content(get_users(), "application/json");
         };
     }
 
+    /// @brief This will return the handler for getting a user
+    /// @return Server::Handler Returns the handler for getting a user
     static Server::Handler get_user_handler() {
         return [](const Request &req, Response &res) {
             res.set_content(get_user(req.path_params.at("string")), "application/json");
         };
     }
 
+    /// @brief This will return the handler for creating a user
+    /// @return Server::Handler Returns the handler for creating a user
     static Server::Handler post_user_handler() {
         return [](const Request &req, Response &res) {
             json j = json::parse(req.body);
@@ -60,6 +70,8 @@ public:
         };
     }
 
+    /// @brief This will return the handler for updating a user
+    /// @return Server::Handler Returns the handler for updating a user
     static Server::Handler put_user_handler() {
         return [](const Request &req, Response &res) {
             json j = json::parse(req.body);
@@ -68,12 +80,16 @@ public:
         };
     }
 
+    /// @brief This will return the handler for deleting a user
+    /// @return Server::Handler Returns the handler for deleting a user
     static Server::Handler delete_user_handler() {
         return [](const Request &req, Response &res) {
             res.set_content(delete_user(req.path_params.at("string")), "text/plain");
         };
     }
 
+    /// @brief This will return all the users
+    /// @return std::string Returns all the users
     static std::string get_users() {
         std::ifstream file(SQL_GET_USERS);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -81,6 +97,8 @@ public:
         return result.dump();
     }
 
+    /// @brief This will get all users from the database
+    /// @return std::string Returns all the users
     static std::string get_user(const std::string &user_id) {
         std::ifstream file(SQL_GET_USER);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -88,6 +106,9 @@ public:
         return result.dump();
     }
 
+    /// @brief This will get a user from the database
+    /// @param user_id The user_id of the user
+    /// @return Model::User Returns the user
     static Model::User get_user_by_id(const std::string &user_id) {
         std::ifstream file(SQL_GET_USER);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -96,6 +117,9 @@ public:
         return user;
     }
 
+    /// @brief This will get a user from the database
+    /// @param email The email of the user
+    /// @return Model::User Returns the user
     static Model::User get_user_by_email(const std::string &email) {
         std::ifstream file(SQL_GET_USER_BY_EMAIL);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -104,6 +128,9 @@ public:
         return user;
     }
 
+    /// @brief This will create a new user
+    /// @param new_user The new user to be created
+    /// @return std::string Returns success or failure
     static std::string create_user(const Model::User &new_user) {
         std::ifstream file1(SQL_CHECK_IF_USER_EXISTS);
         std::string sql1((std::istreambuf_iterator<char>(file1)), std::istreambuf_iterator<char>());
@@ -122,6 +149,9 @@ public:
         }
     }
 
+    /// @brief This will update a user
+    /// @param new_user The new user to be updated
+    /// @return std::string Returns "User updated"
     static std::string update_user(const Model::User &new_user) {
         std::ifstream file(SQL_UPDATE_USER);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -130,11 +160,15 @@ public:
         return "User updated";
     }
 
+    /// @brief This will delete a user
+    /// @param param The user_id of the user
+    /// @return std::string Returns "User deleted"
+    /// @todo TODO: return something elso if user not found
     static std::string delete_user(const std::string &param) {
         std::ifstream file(SQL_DELETE_USER);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         Sqlite::Database::execute_query(sql, param);
-        return "User deleted"; //TODO return something elso if user not found
+        return "User deleted";
     }
 };
 
