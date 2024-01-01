@@ -1,6 +1,13 @@
-httplib
-json
-uuid
-sqlite
-spdlog
-sodium
+Included:
+    httplib
+    json
+    uuid
+    pugixml
+    jwt-cpp
+    picojson
+Required installed:
+    sqlite3
+    libsqlite3-dev
+    spdlog
+    libmsgsl-dev
+    libsodium-dev

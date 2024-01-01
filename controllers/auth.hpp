@@ -20,6 +20,7 @@ public:
         svr.set_pre_routing_handler(authentication_handler());
         svr.Post("/auth/signup", sign_up_handler());
         svr.Post("/auth/signin", sign_in_handler());
+        svr.Options(R"(/auth/.*$)", [](const Request &req, Response &res) {});
     }
 
     /// @brief This will check if the user is authenticated and authorized to
@@ -28,6 +29,9 @@ public:
     /// is successfull else returns handled
     static Server::HandlerWithResponse authentication_handler() {
         return ([](const Request &req, Response &res) {
+            res.set_header("Access-Control-Allow-Origin", "*");
+            res.set_header("Access-Control-Allow-Methods", "POST, OPTIONS");
+            res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
             if (req.path == "/auth/signup" || req.path == "/auth/signin") {
                 return Server::HandlerResponse::Unhandled;
             }
