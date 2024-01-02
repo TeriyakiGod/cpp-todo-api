@@ -30,8 +30,12 @@ public:
     static Server::HandlerWithResponse authentication_handler() {
         return ([](const Request &req, Response &res) {
             res.set_header("Access-Control-Allow-Origin", "*");
-            res.set_header("Access-Control-Allow-Methods", "POST, OPTIONS");
+            res.set_header("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE");
             res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            res.set_header("Access-Control-Expose-Headers", "Authorization");
+            if (req.method == "OPTIONS") {
+                return Server::HandlerResponse::Handled;
+            }
             if (req.path == "/auth/signup" || req.path == "/auth/signin") {
                 return Server::HandlerResponse::Unhandled;
             }

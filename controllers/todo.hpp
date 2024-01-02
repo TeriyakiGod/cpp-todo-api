@@ -33,6 +33,7 @@ public:
         svr.Post("/todo", post_todo_handler());
         svr.Put("/todo", put_todo_handler());
         svr.Delete("/todo/:string", delete_todo_by_id_handler());
+        svr.Options(R"(/todo/.*$)", [](const Request &req, Response &res) {});
     }
 
 private:

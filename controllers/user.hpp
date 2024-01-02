@@ -34,6 +34,7 @@ public:
         svr.Post("/user", post_user_handler());
         svr.Put("/user", put_user_handler());
         svr.Delete("/user/:string", delete_user_handler());
+        svr.Options(R"(/user/.*$)", [](const Request &req, Response &res) {});
     }
 
     /// @brief This will return the handler for getting all the users
@@ -140,9 +141,11 @@ public:
         spdlog::debug("does_email_exist: {}", does_email_exist);
         if (!does_email_exist) {
             std::ifstream file2(SQL_CREATE_USER);
-            std::string sql2((std::istreambuf_iterator<char>(file2)), std::istreambuf_iterator<char>());
+            std::string sql2(
+                (std::istreambuf_iterator<char>(file2)), std::istreambuf_iterator<char>());
             Sqlite::Database::execute_query(
-                sql2, Tools::Uuid::generate(), new_user.name, new_user.email, Tools::Hash::generate(new_user.password), (int)Model::Role::USER);
+                sql2, Tools::Uuid::generate(), new_user.name, new_user.email,
+                Tools::Hash::generate(new_user.password), (int)Model::Role::USER);
             return "New user created";
         } else {
             return "User with this email already exists, please use another email";
@@ -156,7 +159,8 @@ public:
         std::ifstream file(SQL_UPDATE_USER);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         Sqlite::Database::execute_query(
-            sql, new_user.name, new_user.email, Tools::Hash::generate(new_user.password), new_user.user_id);
+            sql, new_user.name, new_user.email, Tools::Hash::generate(new_user.password),
+            new_user.user_id);
         return "User updated";
     }
 
