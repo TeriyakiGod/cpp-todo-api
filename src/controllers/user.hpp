@@ -22,6 +22,7 @@ using json = nlohmann::json;
 #define SQL_GET_USER_BY_EMAIL "../res/sql/user/getUserByEmail.sql"
 
 namespace Controller {
+/// @brief This class handles all the user related routes
 class User {
 public:
     /// @brief This will register all the routes related to user
@@ -34,7 +35,6 @@ public:
         svr.Post("/user", post_user_handler());
         svr.Put("/user", put_user_handler());
         svr.Delete("/user/:string", delete_user_handler());
-        svr.Options(R"(/user/.*$)", [](const Request &req, Response &res) {});
     }
 
     /// @brief This will return the handler for getting all the users

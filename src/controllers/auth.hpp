@@ -12,6 +12,7 @@ using json = nlohmann::json;
 #define USER_API_ACCESS_ROLE Model::Role::ADMIN
 
 namespace Controller {
+/// @brief This class handles all the authentication related routes
 class Auth {
 public:
     /// @brief This will register all the routes related to authentication
@@ -20,7 +21,6 @@ public:
         svr.set_pre_routing_handler(authentication_handler());
         svr.Post("/auth/signup", sign_up_handler());
         svr.Post("/auth/signin", sign_in_handler());
-        svr.Options(R"(/auth/.*$)", [](const Request &req, Response &res) {});
     }
 
     /// @brief This will check if the user is authenticated and authorized to
@@ -39,18 +39,20 @@ public:
             if (req.path == "/auth/signup" || req.path == "/auth/signin") {
                 return Server::HandlerResponse::Unhandled;
             }
-            std::string user_id = Auth::authenticate(req, res);
-            if (user_id.empty()) {
-                res.status = 403;
-                res.set_content("Access denied", "text/plain");
-                return Server::HandlerResponse::Handled;
-            }
-            res.set_header("user_id", user_id.c_str());
-            if (req.path == "/user") {
-                if (Auth::authorize(user_id) != USER_API_ACCESS_ROLE) {
+            if (req.path == "/user" || req.path == "/todo") {
+                std::string user_id = Auth::authenticate(req, res);
+                if (user_id.empty()) {
                     res.status = 403;
                     res.set_content("Access denied", "text/plain");
                     return Server::HandlerResponse::Handled;
+                }
+                res.set_header("user_id", user_id.c_str());
+                if (req.path == "/user") {
+                    if (Auth::authorize(user_id) != USER_API_ACCESS_ROLE) {
+                        res.status = 403;
+                        res.set_content("Access denied", "text/plain");
+                        return Server::HandlerResponse::Handled;
+                    }
                 }
             }
             return Server::HandlerResponse::Unhandled;

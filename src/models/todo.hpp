@@ -7,7 +7,6 @@ using json = nlohmann::json;
 using namespace std;
 
 namespace Model {
-/// @brief Todo model
 /// @details This model is used to store the todo data
 struct Todo {
     string todo_id;

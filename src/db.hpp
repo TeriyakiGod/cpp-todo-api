@@ -9,9 +9,14 @@ using json = nlohmann::json;
 
 #define DB_FILE_NAME "../db.sqlite3"
 
+/// @brief SQLite
 namespace Sqlite {
+/// @brief Controls the database
 class Database {
 public:
+    /// @brief Executes a query
+    /// @param sql The SQL query to be executed
+    /// @return json Returns the result of the query
     template <typename... Args> static json execute_query(const std::string &sql, Args... args) {
         spdlog::debug("Executing query:\n{}", sql);
         sqlite3 *db = open_database();
@@ -63,6 +68,9 @@ public:
     }
 
 private:
+    /// @brief Converts query result to json
+    /// @param stmt The sqlite3 statement
+    /// @param result The json object to store the result
     static void get_json(sqlite3_stmt *stmt, json &result) {
         int column_count = sqlite3_column_count(stmt);
         for (int i = 0; i < column_count; i++) {
@@ -87,6 +95,11 @@ private:
         }
     }
 
+    /// @brief Binds parameters to the query
+    /// @param stmt The sqlite3 statement
+    /// @param index The index of the parameter
+    /// @param value The value of the parameter
+    /// @param args The rest of the parameters
     template <typename T, typename... Args>
     static void bind_params(sqlite3_stmt *stmt, int index, T value, Args... args) {
         if constexpr (std::is_integral_v<T>) {
@@ -99,10 +112,15 @@ private:
         bind_params(stmt, index + 1, args...);
     }
 
+    /// @brief Binds parameters to the query (base case)
+    /// @param stmt The sqlite3 statement
+    /// @param index The index of the parameter
     static void bind_params(sqlite3_stmt *stmt, int index) {
         // No-op for base case
     }
 
+    /// @brief Opens the database
+    /// @return sqlite3* Returns the database pointer
     static sqlite3 *open_database() {
         sqlite3 *db;
         spdlog::debug("Opening database...");
@@ -116,6 +134,8 @@ private:
         return db;
     }
 
+    /// @brief Closes the database
+    /// @param db The database pointer
     static bool close_database(sqlite3 *db) {
         int rc = sqlite3_close(db);
         if (rc) {

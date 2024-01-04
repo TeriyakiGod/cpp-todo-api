@@ -14,9 +14,14 @@
 #define SECRET_KEY_FILE "../secret.key"
 #define JWT_TOKEN_EXPIRATION 10
 
+/// @brief Namespace for tools and utilities
 namespace Tools {
+/// @brief Helper class for handling JWT
 class Jwt {
 public:
+    /// @brief Generates a JWT token
+    /// @param user_id The user id to be stored in the token
+    /// @return std::string Returns the generated token
     static std::string generate_token(std::string user_id) {
         std::ifstream file(SECRET_KEY_FILE);
         std::string secret_key(
@@ -33,6 +38,9 @@ public:
                 .sign(jwt::algorithm::hs256{secret_key});
         return token;
     }
+
+    /// @brief Verifies a JWT token
+    /// @param token The token to be verified
     static std::string verify_user(std::string token) {
         std::ifstream file(SECRET_KEY_FILE);
         std::string secret_key(
@@ -55,8 +63,11 @@ public:
     }
 };
 
+/// @brief Helper class for handling UUID
 class Uuid {
 public:
+    /// @brief Generates a UUID
+    /// @return std::string Returns the generated UUID
     static std::string generate() {
         std::random_device rd;
         auto seed_data = std::array<int, std::mt19937::state_size>{};
@@ -69,8 +80,12 @@ public:
     }
 };
 
+/// @brief Helper class for handling hashing
 class Hash {
 public:
+    /// @brief Hashes a password
+    /// @param password The password to be hashed
+    /// @return std::string Returns the hashed password
     static std::string generate(std::string password) {
         spdlog::debug("Password: {}", password);
         if (sodium_init() < 0) {
@@ -91,8 +106,13 @@ public:
         return hashed_password;
     }
 };
+
+/// @brief Helper class for handling resources (loading xml files)
 class Resource {
 public:
+    /// @brief Loads a string from an xml file
+    /// @param res The resource name (the xml file name)
+    /// @param name The string name
     static std::string load_string(std::string res, std::string name) {
         pugi::xml_document doc;
         std::string file_path = RESOURCE_PATH + res + ".xml";

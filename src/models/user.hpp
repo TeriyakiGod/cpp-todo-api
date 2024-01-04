@@ -10,10 +10,9 @@ using json = nlohmann::json;
 using namespace std;
 
 namespace Model {
-/// @brief User roles
+/// @brief user roles
 enum Role { ADMIN, USER, NONE };
 
-/// @brief User model
 struct User {
     string user_id;
     string name;

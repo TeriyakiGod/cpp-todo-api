@@ -6,6 +6,12 @@ This is a simple Todo API written in C++. It allows you to manage your tasks eas
 
 Follow these instructions to get a copy of the project up and running on your local machine.
 
+## Prerequisites
+
+- cmake
+- g++
+- doxygen
+
 ### Clone the Repository
 
 ```bash
@@ -30,3 +36,9 @@ cd build
 cmake ..
 make
 ```
+
+Build the Documentation
+```bash
+doxygen Doxyfile
+```
+Now when you start the server, the documentation mounts at the root of the server.

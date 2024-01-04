@@ -21,6 +21,7 @@ using json = nlohmann::json;
 #define SQL_GET_TODOS "../res/sql/todo/getTodos.sql"
 
 namespace Controller {
+/// @brief This class handles all the todo related routes
 class Todo {
 public:
     /// @brief This will register all the routes related to todo
@@ -33,7 +34,6 @@ public:
         svr.Post("/todo", post_todo_handler());
         svr.Put("/todo", put_todo_handler());
         svr.Delete("/todo/:string", delete_todo_by_id_handler());
-        svr.Options(R"(/todo/.*$)", [](const Request &req, Response &res) {});
     }
 
 private:
