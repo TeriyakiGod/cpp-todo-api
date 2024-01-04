@@ -5,20 +5,20 @@
 #include <httplib.h>
 #include <string>
 using namespace httplib;
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 using json = nlohmann::json;
+#include "../db.hpp"
 #include "../models/todo.hpp"
-#include "../src/db.hpp"
-#include "../src/tools.hpp"
+#include "../tools.hpp"
 #include "auth.hpp"
 #include <spdlog/spdlog.h>
 
-#define SQL_CREATE_TODO_TABLE "../sql/todo/createTodoTable.sql"
-#define SQL_CREATE_TODO "../sql/todo/createTodo.sql"
-#define SQL_UPDATE_TODO "../sql/todo/updateTodo.sql"
-#define SQL_DELETE_TODO "../sql/todo/deleteTodo.sql"
-#define SQL_GET_TODO "../sql/todo/getTodo.sql"
-#define SQL_GET_TODOS "../sql/todo/getTodos.sql"
+#define SQL_CREATE_TODO_TABLE "../res/sql/todo/createTodoTable.sql"
+#define SQL_CREATE_TODO "../res/sql/todo/createTodo.sql"
+#define SQL_UPDATE_TODO "../res/sql/todo/updateTodo.sql"
+#define SQL_DELETE_TODO "../res/sql/todo/deleteTodo.sql"
+#define SQL_GET_TODO "../res/sql/todo/getTodo.sql"
+#define SQL_GET_TODOS "../res/sql/todo/getTodos.sql"
 
 namespace Controller {
 class Todo {

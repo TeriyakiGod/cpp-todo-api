@@ -1,25 +1,25 @@
 #ifndef USER_H
 #define USER_H
 
-#include "../src/db.hpp"
+#include "../db.hpp"
 #include <fstream>
 #include <httplib.h>
 #include <string>
 using namespace httplib;
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 using json = nlohmann::json;
 #include "../models/user.hpp"
-#include "../src/tools.hpp"
+#include "../tools.hpp"
 #include <spdlog/spdlog.h>
 
-#define SQL_CREATE_USER_TABLE "../sql/user/createUserTable.sql"
-#define SQL_CHECK_IF_USER_EXISTS "../sql/user/checkIfUserExists.sql"
-#define SQL_CREATE_USER "../sql/user/createUser.sql"
-#define SQL_UPDATE_USER "../sql/user/updateUser.sql"
-#define SQL_DELETE_USER "../sql/user/deleteUser.sql"
-#define SQL_GET_USERS "../sql/user/getUsers.sql"
-#define SQL_GET_USER "../sql/user/getUser.sql"
-#define SQL_GET_USER_BY_EMAIL "../sql/user/getUserByEmail.sql"
+#define SQL_CREATE_USER_TABLE "../res/sql/user/createUserTable.sql"
+#define SQL_CHECK_IF_USER_EXISTS "../res/sql/user/checkIfUserExists.sql"
+#define SQL_CREATE_USER "../res/sql/user/createUser.sql"
+#define SQL_UPDATE_USER "../res/sql/user/updateUser.sql"
+#define SQL_DELETE_USER "../res/sql/user/deleteUser.sql"
+#define SQL_GET_USERS "../res/sql/user/getUsers.sql"
+#define SQL_GET_USER "../res/sql/user/getUser.sql"
+#define SQL_GET_USER_BY_EMAIL "../res/sql/user/getUserByEmail.sql"
 
 namespace Controller {
 class User {

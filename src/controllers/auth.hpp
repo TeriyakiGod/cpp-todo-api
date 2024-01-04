@@ -2,10 +2,10 @@
 #define AUTH_H
 
 #include "../models/user.hpp"
-#include "../src/tools.hpp"
+#include "../tools.hpp"
 #include "user.hpp"
 #include <httplib.h>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 using json = nlohmann::json;
 

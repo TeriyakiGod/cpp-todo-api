@@ -1,8 +1,8 @@
 #ifndef SQLITE_DATABASE_H
 #define SQLITE_DATABASE_H
 
-#include "json.hpp"
 #include "spdlog/spdlog.h"
+#include <nlohmann/json.hpp>
 #include <sqlite3.h>
 #include <string>
 using json = nlohmann::json;
