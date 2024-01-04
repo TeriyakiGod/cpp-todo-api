@@ -1,14 +1,18 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+#include "db.hpp"
 #include <fstream>
 #include <jwt-cpp/jwt.h>
+
 #include <openssl/rand.h>
 #include <pugixml.hpp>
 #include <sodium.h>
-#include <spdlog/spdlog.h>
-#include <string>
 #include <uuid.h>
+#include <vector>
+
+#include <httplib.h>
+using namespace httplib;
 
 #define RESOURCE_PATH "../res/"
 

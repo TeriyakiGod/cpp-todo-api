@@ -1,9 +1,7 @@
 #ifndef MODEL_TODO_H
 #define MODEL_TODO_H
 
-#include <nlohmann/json.hpp>
-#include <string>
-using json = nlohmann::json;
+#include "model.hpp"
 using namespace std;
 
 namespace Model {

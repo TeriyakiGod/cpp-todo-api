@@ -1,11 +1,6 @@
-#include "controllers/auth.hpp"
-#include "controllers/todo.hpp"
-#include "controllers/user.hpp"
-#include "db.hpp"
-#include "tools.hpp"
-#include <httplib.h>
-#include <iostream>
-#include <spdlog/spdlog.h>
+#include "controllers/auth-controller.hpp"
+#include "controllers/todo-controller.hpp"
+#include "controllers/user-controller.hpp"
 /**
  * @mainpage cpp-todo-api
  *
@@ -21,7 +16,7 @@
  * @subsection Todo
  */
 int main(int, char **) {
-    spdlog::set_level(spdlog::level::debug);
+    spdlog::set_level(spdlog::level::info);
 
     Tools::Jwt::generate_secret_key(32);
 

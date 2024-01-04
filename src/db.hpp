@@ -1,16 +1,16 @@
 #ifndef SQLITE_DATABASE_H
 #define SQLITE_DATABASE_H
 
-#include "spdlog/spdlog.h"
 #include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
 #include <sqlite3.h>
 #include <string>
 using json = nlohmann::json;
 
-#define DB_FILE_NAME "../db.sqlite3"
+#define DB_FILE_NAME "db.sqlite3"
 
 /// @brief SQLite
-namespace Sqlite {
+namespace Tools {
 /// @brief Controls the database
 class Database {
 public:
@@ -146,6 +146,6 @@ private:
         return true;
     }
 };
-} // namespace Sqlite
+} // namespace Tools
 
 #endif // SQLITE_DATABASE_H

@@ -1,12 +1,7 @@
 #ifndef MODEL_USER_H
 #define MODEL_USER_H
 
-#include <nlohmann/json.hpp>
-#include <regex>
-#include <sodium.h>
-#include <spdlog/spdlog.h>
-#include <string>
-using json = nlohmann::json;
+#include "model.hpp"
 using namespace std;
 
 namespace Model {

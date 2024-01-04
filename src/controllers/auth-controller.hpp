@@ -1,13 +1,8 @@
-#ifndef AUTH_H
-#define AUTH_H
+#ifndef CONTROLLER_AUTH_H
+#define CONTROLLER_AUTH_H
 
-#include "../models/user.hpp"
-#include "../tools.hpp"
-#include "user.hpp"
-#include <httplib.h>
-#include <nlohmann/json.hpp>
-#include <spdlog/spdlog.h>
-using json = nlohmann::json;
+#include "user-controller.hpp"
+#include "controller.hpp"
 
 #define USER_API_ACCESS_ROLE Model::Role::ADMIN
 
@@ -151,4 +146,4 @@ private:
 };
 } // namespace Controller
 
-#endif // AUTH_H
+#endif // CONTROLLER_AUTH_H

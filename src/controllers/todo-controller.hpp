@@ -1,17 +1,7 @@
-#ifndef TODO_H
-#define TODO_H
+#ifndef CONTROLLER_TODO_H
+#define CONTROLLER_TODO_H
 
-#include <fstream>
-#include <httplib.h>
-#include <string>
-using namespace httplib;
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
-#include "../db.hpp"
-#include "../models/todo.hpp"
-#include "../tools.hpp"
-#include "auth.hpp"
-#include <spdlog/spdlog.h>
+#include "controller.hpp"
 
 #define SQL_CREATE_TODO_TABLE "../res/sql/todo/createTodoTable.sql"
 #define SQL_CREATE_TODO "../res/sql/todo/createTodo.sql"
@@ -94,7 +84,7 @@ private:
     static void prepare_todo_table() {
         std::ifstream file(SQL_CREATE_TODO_TABLE);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        Sqlite::Database::execute_query(sql);
+        Tools::Database::execute_query(sql);
     }
 
     /// @brief This will return all the todos
@@ -103,7 +93,7 @@ private:
     static std::string get_todos(std::string user_id) {
         std::ifstream file(SQL_GET_TODOS);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        json result = Sqlite::Database::execute_query(sql, user_id);
+        json result = Tools::Database::execute_query(sql, user_id);
         return result.dump();
     }
 
@@ -114,7 +104,7 @@ private:
     static std::string get_todo_by_id(const std::string &id, const std::string &user_id) {
         std::ifstream file(SQL_GET_TODO);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        json result = Sqlite::Database::execute_query(sql, id, user_id);
+        json result = Tools::Database::execute_query(sql, id, user_id);
         return result.dump();
     }
 
@@ -124,7 +114,7 @@ private:
     static std::string create_todo(const Model::Todo &new_todo) {
         std::ifstream file(SQL_CREATE_TODO);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        Sqlite::Database::execute_query(
+        Tools::Database::execute_query(
             sql, Tools::Uuid::generate(), new_todo.user_id, new_todo.title, new_todo.description,
             new_todo.status);
         return "New todo created";
@@ -136,7 +126,7 @@ private:
     static std::string update_todo(const Model::Todo &new_todo) {
         std::ifstream file(SQL_UPDATE_TODO);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        Sqlite::Database::execute_query(
+        Tools::Database::execute_query(
             sql, new_todo.title, new_todo.description, new_todo.status, new_todo.todo_id);
         return "Todo updated";
     }
@@ -148,10 +138,10 @@ private:
     static std::string delete_todo(const std::string &id, const std::string &user_id) {
         std::ifstream file(SQL_DELETE_TODO);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        Sqlite::Database::execute_query(sql, id);
+        Tools::Database::execute_query(sql, id);
         return "Todo deleted";
     }
 };
 } // namespace Controller
 
-#endif // TODO_H
+#endif // CONTROLLER_TODO_H

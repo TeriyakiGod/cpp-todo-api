@@ -1,16 +1,7 @@
-#ifndef USER_H
-#define USER_H
+#ifndef CONTROLLER_USER_H
+#define CONTROLLER_USER_H
 
-#include "../db.hpp"
-#include <fstream>
-#include <httplib.h>
-#include <string>
-using namespace httplib;
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
-#include "../models/user.hpp"
-#include "../tools.hpp"
-#include <spdlog/spdlog.h>
+#include "controller.hpp"
 
 #define SQL_CREATE_USER_TABLE "../res/sql/user/createUserTable.sql"
 #define SQL_CHECK_IF_USER_EXISTS "../res/sql/user/checkIfUserExists.sql"
@@ -42,7 +33,7 @@ public:
     static void prepare_user_table() {
         std::ifstream file(SQL_CREATE_USER_TABLE);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        Sqlite::Database::execute_query(sql);
+        Tools::Database::execute_query(sql);
     }
 
     /// @brief This will return the handler for getting all the users
@@ -94,7 +85,7 @@ public:
     static std::string get_users() {
         std::ifstream file(SQL_GET_USERS);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        json result = Sqlite::Database::execute_query(sql);
+        json result = Tools::Database::execute_query(sql);
         return result.dump();
     }
 
@@ -103,7 +94,7 @@ public:
     static std::string get_user(const std::string &user_id) {
         std::ifstream file(SQL_GET_USER);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        json result = Sqlite::Database::execute_query(sql, user_id);
+        json result = Tools::Database::execute_query(sql, user_id);
         return result.dump();
     }
 
@@ -113,7 +104,7 @@ public:
     static Model::User get_user_by_id(const std::string &user_id) {
         std::ifstream file(SQL_GET_USER);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        json result = Sqlite::Database::execute_query(sql, user_id);
+        json result = Tools::Database::execute_query(sql, user_id);
         auto user = result.template get<Model::User>();
         return user;
     }
@@ -124,7 +115,7 @@ public:
     static Model::User get_user_by_email(const std::string &email) {
         std::ifstream file(SQL_GET_USER_BY_EMAIL);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        json result = Sqlite::Database::execute_query(sql, email);
+        json result = Tools::Database::execute_query(sql, email);
         auto user = result.template get<Model::User>();
         return user;
     }
@@ -135,7 +126,7 @@ public:
     static std::string create_user(const Model::User &new_user) {
         std::ifstream file1(SQL_CHECK_IF_USER_EXISTS);
         std::string sql1((std::istreambuf_iterator<char>(file1)), std::istreambuf_iterator<char>());
-        json result = Sqlite::Database::execute_query(sql1, new_user.email);
+        json result = Tools::Database::execute_query(sql1, new_user.email);
 
         bool does_email_exist = result["user_exists"].template get<int>();
         spdlog::debug("does_email_exist: {}", does_email_exist);
@@ -143,7 +134,7 @@ public:
             std::ifstream file2(SQL_CREATE_USER);
             std::string sql2(
                 (std::istreambuf_iterator<char>(file2)), std::istreambuf_iterator<char>());
-            Sqlite::Database::execute_query(
+            Tools::Database::execute_query(
                 sql2, Tools::Uuid::generate(), new_user.name, new_user.email,
                 Tools::Hash::generate(new_user.password), (int)Model::Role::USER);
             return "New user created";
@@ -158,7 +149,7 @@ public:
     static std::string update_user(const Model::User &new_user) {
         std::ifstream file(SQL_UPDATE_USER);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        Sqlite::Database::execute_query(
+        Tools::Database::execute_query(
             sql, new_user.name, new_user.email, Tools::Hash::generate(new_user.password),
             new_user.user_id);
         return "User updated";
@@ -171,11 +162,11 @@ public:
     static std::string delete_user(const std::string &param) {
         std::ifstream file(SQL_DELETE_USER);
         std::string sql((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-        Sqlite::Database::execute_query(sql, param);
+        Tools::Database::execute_query(sql, param);
         return "User deleted";
     }
 };
 
 } // namespace Controller
 
-#endif // USER_H
+#endif // CONTROLLER_USER_H
