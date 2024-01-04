@@ -15,8 +15,8 @@ Follow these instructions to get a copy of the project up and running on your lo
 ### How to run
 Clone the Repository
 ```bash
-git clone https://github.com/your-username/cpp-todo-app.git
-cd cpp-todo-app
+git clone https://github.com/teriyakigod/cpp-todo-api.git
+cd cpp-todo-api
 ```
 
 Initialize and Update vcpkg Submodule
