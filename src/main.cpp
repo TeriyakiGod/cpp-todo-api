@@ -32,7 +32,7 @@ int main(int, char **) {
         spdlog::info("{} {} {}", req.method, req.path, res.status);
     });
 
-    auto ret = svr.set_mount_point("/", "../doc/html");
+    auto ret = svr.set_mount_point("/", "doc/html");
     if (!ret) {
         spdlog::error("Failed to set mount point");
     }

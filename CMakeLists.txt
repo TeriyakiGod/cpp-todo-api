@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(cpp-todo-app VERSION 0.1.0 LANGUAGES C CXX)
+project(cpp-todo-api VERSION 0.1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 
 # Set the path to the vcpkg toolchain file
@@ -44,15 +44,15 @@ find_path(JWT_CPP_INCLUDE_DIRS "jwt-cpp/base.h")
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-add_executable(cpp-todo-app src/main.cpp)
+add_executable(cpp-todo-api src/main.cpp)
 
-target_link_libraries(cpp-todo-app PRIVATE unofficial::sqlite3::sqlite3)
-target_link_libraries(cpp-todo-app PRIVATE spdlog::spdlog_header_only)
-target_link_libraries(cpp-todo-app PRIVATE fmt::fmt-header-only)
-target_link_libraries(cpp-todo-app PRIVATE unofficial-sodium::sodium unofficial-sodium::sodium_config_public)
-target_link_libraries(cpp-todo-app PRIVATE OpenSSL::SSL OpenSSL::Crypto)
-target_link_libraries(cpp-todo-app PRIVATE httplib::httplib)
-target_link_libraries(cpp-todo-app PRIVATE nlohmann_json::nlohmann_json)
-target_link_libraries(cpp-todo-app PRIVATE stduuid)
-target_link_libraries(cpp-todo-app PRIVATE pugixml::static pugixml::pugixml)
-target_include_directories(cpp-todo-app PRIVATE ${JWT_CPP_INCLUDE_DIRS})
+target_link_libraries(cpp-todo-api PRIVATE unofficial::sqlite3::sqlite3)
+target_link_libraries(cpp-todo-api PRIVATE spdlog::spdlog_header_only)
+target_link_libraries(cpp-todo-api PRIVATE fmt::fmt-header-only)
+target_link_libraries(cpp-todo-api PRIVATE unofficial-sodium::sodium unofficial-sodium::sodium_config_public)
+target_link_libraries(cpp-todo-api PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+target_link_libraries(cpp-todo-api PRIVATE httplib::httplib)
+target_link_libraries(cpp-todo-api PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(cpp-todo-api PRIVATE stduuid)
+target_link_libraries(cpp-todo-api PRIVATE pugixml::static pugixml::pugixml)
+target_include_directories(cpp-todo-api PRIVATE ${JWT_CPP_INCLUDE_DIRS})

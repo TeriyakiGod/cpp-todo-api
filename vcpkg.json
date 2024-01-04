@@ -40,6 +40,9 @@
         },
         {
             "name": "vcpkg-cmake"
+        },
+        {
+            "name": "openssl"
         }
     ]
 }
