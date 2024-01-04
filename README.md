@@ -12,21 +12,16 @@ Follow these instructions to get a copy of the project up and running on your lo
 - g++
 - doxygen
 
-### Clone the Repository
-
+### How to run
+Clone the Repository
 ```bash
 git clone https://github.com/your-username/cpp-todo-app.git
 cd cpp-todo-app
 ```
-Initialize and Update vcpkg Submodule
 
+Initialize and Update vcpkg Submodule
 ```bash
 git submodule update --init --recursive
-```
-
-Install Dependencies with vcpkg
-```bash
-./vcpkg/vcpkg install --triplet x64-linux
 ```
 
 Build the Project
@@ -36,9 +31,3 @@ cd build
 cmake ..
 make
 ```
-
-Build the Documentation
-```bash
-doxygen Doxyfile
-```
-Now when you start the server, the documentation mounts at the root of the server.

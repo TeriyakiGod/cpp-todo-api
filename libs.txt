@@ -1,9 +1,0 @@
-    httplib
-    json
-    uuid
-    pugixml
-    jwt-cpp
-    sqlite3
-    spdlog
-    libmsgsl-dev
-    libsodium-dev

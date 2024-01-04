@@ -3,69 +3,43 @@
     "version": "0.1.0",
     "dependencies": [
         {
-            "name": "brotli",
-            "version": "1.1.0#1",
-            "triplet": "x64-linux"
+            "name": "brotli"
         },
         {
-            "name": "cpp-httplib",
-            "version": "0.14.1",
-            "triplet": "x64-linux"
+            "name": "cpp-httplib"
         },
         {
-            "name": "fmt",
-            "version": "10.2.0",
-            "triplet": "x64-linux"
+            "name": "fmt"
         },
         {
-            "name": "jwt-cpp",
-            "version": "0.6.0",
-            "triplet": "x64-linux"
+            "name": "jwt-cpp"
         },
         {
-            "name": "libsodium",
-            "version": "1.0.19",
-            "triplet": "x64-linux"
+            "name": "libsodium"
         },
         {
-            "name": "nlohmann-json",
-            "version": "3.11.3",
-            "triplet": "x64-linux"
+            "name": "nlohmann-json"
         },
         {
-            "name": "picojson",
-            "version": "1.3.0#3",
-            "triplet": "x64-linux"
+            "name": "picojson"
         },
         {
-            "name": "pugixml",
-            "version": "1.14",
-            "triplet": "x64-linux"
+            "name": "pugixml"
         },
         {
-            "name": "spdlog",
-            "version": "1.12.0",
-            "triplet": "x64-linux"
+            "name": "spdlog"
         },
         {
-            "name": "sqlite3",
-            "version": "3.43.2#1",
-            "triplet": "x64-linux"
+            "name": "sqlite3"
         },
         {
-            "name": "stduuid",
-            "version": "1.2.3",
-            "triplet": "x64-linux"
+            "name": "stduuid"
         },
         {
-            "name": "vcpkg-cmake-config",
-            "version": "2022-02-06#1",
-            "triplet": "x64-linux"
+            "name": "vcpkg-cmake-config"
         },
         {
-            "name": "vcpkg-cmake",
-            "version": "2023-05-04",
-            "triplet": "x64-linux"
+            "name": "vcpkg-cmake"
         }
     ]
 }

@@ -2,6 +2,7 @@
 #include "controllers/todo.hpp"
 #include "controllers/user.hpp"
 #include "db.hpp"
+#include "tools.hpp"
 #include <httplib.h>
 #include <iostream>
 #include <spdlog/spdlog.h>
@@ -21,6 +22,9 @@
  */
 int main(int, char **) {
     spdlog::set_level(spdlog::level::debug);
+
+    Tools::Jwt::generate_secret_key(32);
+
     spdlog::info("Starting server...");
     httplib::Server svr;
 

@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <jwt-cpp/jwt.h>
+#include <openssl/rand.h>
 #include <pugixml.hpp>
 #include <sodium.h>
 #include <spdlog/spdlog.h>
@@ -19,6 +20,34 @@ namespace Tools {
 /// @brief Helper class for handling JWT
 class Jwt {
 public:
+    /// @brief Generates a secret key
+    /// @param length The length of the key
+    static void generate_secret_key(size_t length) {
+        std::ifstream key_file(SECRET_KEY_FILE);
+        if (key_file) {
+            // File already exists
+            spdlog::info("Secret key file already exists");
+            key_file.close();
+            return;
+        }
+
+        std::string key(length, '\0');
+        if (RAND_bytes(reinterpret_cast<unsigned char *>(&key[0]), length) != 1) {
+            // handle error
+            spdlog::error("Error: Unable to generate secret key");
+        }
+
+        // Write the key to a file
+        std::ofstream new_key_file(SECRET_KEY_FILE);
+        if (!new_key_file) {
+            // handle error
+            spdlog::error("Error: Unable to open secret key file");
+        }
+        new_key_file << key;
+        new_key_file.close();
+        spdlog::info("Secret key file generated");
+    }
+
     /// @brief Generates a JWT token
     /// @param user_id The user id to be stored in the token
     /// @return std::string Returns the generated token
