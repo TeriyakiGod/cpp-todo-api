@@ -31,3 +31,9 @@ cd build
 cmake ..
 make
 ```
+Building the project should get all the vcpkg dependencies, generate documentation and of course build the app.
+Run the app after building.
+```bash
+./cpp-todo-api
+```
+The documentation should be available at the root (localhost:8080/)
