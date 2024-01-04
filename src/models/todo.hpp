@@ -7,6 +7,8 @@ using json = nlohmann::json;
 using namespace std;
 
 namespace Model {
+/// @brief Todo model
+/// @details This model is used to store the todo data
 struct Todo {
     string todo_id;
     string user_id;
@@ -15,6 +17,9 @@ struct Todo {
     int status;
 };
 
+/// @brief This method converts from Json object to Todo object
+/// @param j The json object
+/// @param t The Todo object
 void from_json(const json &j, Todo &t) {
     auto it = j.find("todo_id");
     if (it != j.end())
@@ -37,6 +42,9 @@ void from_json(const json &j, Todo &t) {
         it->get_to(t.status);
 }
 
+/// @brief This method converts from Todo object to Json object
+/// @param j The json object
+/// @param t The Todo object
 void to_json(json &j, const Todo &t) {
     j = json{
         {"todo_id", t.todo_id},
