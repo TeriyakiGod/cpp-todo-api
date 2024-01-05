@@ -1,6 +1,6 @@
 # C++ Todo API
 
-This is a simple Todo API written in C++. It allows you to manage your tasks easily from the command line.
+This is a simple Todo API written in C++. It allows you to manage your tasks easily. Can be connected to a todo app client.
 
 ## Getting Started
 
